@@ -40,13 +40,68 @@
       "publicKey": "TBD",
       "added": "2026-06"
     },
-
+    {
+      "id": "bur-northeast-1",
+      "name": "BUR-NorthEast-1",
+      "status": "on-air",
+      "role": "Repeater",
+      "location": "42.522446, -71.187099",
+      "hardware": "N/A",
+      "admin": "TBD",
+      "publicKey": "TBD",
+      "added": "2026-06"
+    },
+    {
+      "id": "bur-northeast-2",
+      "name": "BUR-NorthEast-2",
+      "status": "on-air",
+      "role": "Repeater",
+      "location": "42.519877, -71.178434",
+      "hardware": "N/A",
+      "admin": "TBD",
+      "publicKey": "TBD",
+      "added": "2026-06"
+    },
     {
       "id": "bur-northeast-3",
       "name": "BUR-NorthEast-3",
       "status": "on-air",
       "role": "Repeater",
-      "location": "TBD",
+      "location": "42.527644, -71.185513",
+      "hardware": "N/A",
+      "admin": "TBD",
+      "publicKey": "TBD",
+      "added": "2026-06"
+    },
+    {
+      "id": "bur-southwest-2",
+      "name": "BUR-SouthWest-2",
+      "status": "on-air",
+      "role": "Repeater",
+      "location": "42.478918, -71.224950",
+      "hardware": "N/A",
+      "admin": "TBD",
+      "publicKey": "TBD",
+      "added": "2026-06"
+    },
+    {
+      "id": "bur-mnk-temp",
+      "name": "BUR-MNK-Temp",
+      "status": "on-air",
+      "role": "Repeater",
+      "location": "42.522279, -71.186904",
+      "hardware": "N/A",
+      "admin": "TBD",
+      "publicKey": "TBD",
+      "added": "2026-06"
+    },
+
+    {
+      "id": "lex-whipple-mnk",
+      "name": "LEX-Whipple-MNK",
+      "status": "on-air",
+      "role": "Repeater",
+      "location": "42.442870, -71.183010",
       "hardware": "N/A",
       "admin": "TBD",
       "publicKey": "TBD",
