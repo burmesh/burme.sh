@@ -9,15 +9,14 @@
       "name": "MNK-home",
       "publicKey": "b1980469771c811218166d2177cabbd70271fa9bc4fc928ac98c8652cf8f2690"
     }
-
   },
   "repeaters": [
     {
-      "id": "bur-chestnut",
-      "name": "BUR - Chestnut",
+      "id": "bur-chestnut-1",
+      "name": "BUR-Chestnut-1",
       "status": "coming-soon",
       "role": "Repeater",
-      "location": "Corner of Chestnut Ave & Hershey Road, Burlington, MA",
+      "location": "TBD",
       "hardware": "SenseCAP Solar Node P1-Pro (solar / battery powered)",
       "admin": "a2x",
       "publicKey": null,
