@@ -8,6 +8,10 @@
     "mnk": {
       "name": "MNK-home",
       "publicKey": "b1980469771c811218166d2177cabbd70271fa9bc4fc928ac98c8652cf8f2690"
+    },
+    "sc" : {
+      "name": "SC Home",
+      "publicKey": "7dccb5095edf979f732ff9a3e2d50869c386de858055eae7214747e063274e53"
     }
   },
   "repeaters": [
@@ -29,7 +33,7 @@
       "role": "Repeater",
       "location": "Fox Hill Neighbourhood, Burlington, MA",
       "hardware": "heltec v4",
-      "admin": "SC Mobile",
+      "admin": "sc",
       "publicKey": "b16ba51b50f06b6dca9b0bda7e0d38291fa5dca5a1c7a0a28c013c91eb48b62a",
       "added": "2026-06"
     },
