@@ -1,0 +1,14 @@
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+.idea
+*.sw?
+.vscode/*
+!.vscode/extensions.json
+
+# Tooling
+.wrangler
+.direnv
+node_modules

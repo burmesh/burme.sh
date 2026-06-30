@@ -1,0 +1,13 @@
+{
+  "name": "burme.sh",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Burlington Mesh — static info site for burme.sh, served from a Cloudflare Worker with static assets",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.62.0"
+  }
+}

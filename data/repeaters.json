@@ -1,0 +1,56 @@
+{
+  "$schema": "./repeaters.schema.json",
+  "admins": {
+    "a2x": {
+      "name": "A2X - 532A",
+      "publicKey": "532afc4e41e5dff06e7278b4510fef304d6da09b92c17df9c7c34c7d1dc69034"
+    }
+  },
+  "repeaters": [
+    {
+      "id": "bur-chestnut",
+      "name": "BUR - Chestnut",
+      "status": "coming-soon",
+      "role": "Repeater",
+      "location": "Corner of Chestnut Ave & Hershey Road, Burlington, MA",
+      "hardware": "SenseCAP Solar Node P1-Pro (solar / battery powered)",
+      "admin": "a2x",
+      "publicKey": null,
+      "added": "2026-06"
+    },
+    {
+      "id": "bur-fox-hill",
+      "name": "BUR - Fox Hill",
+      "status": "on-air",
+      "role": "Repeater",
+      "location": "Fox Hill Neighbourhood, Burlington, MA",
+      "hardware": "N/A",
+      "admin": "TBD",
+      "publicKey": "TBD",
+      "added": "2026-06"
+    },
+    {
+      "id": "bur-ma-northwest",
+      "name": "BUR - MA NORTHWEST",
+      "status": "on-air",
+      "role": "Repeater",
+      "location": "TBD",
+      "hardware": "N/A",
+      "admin": "TBD",
+      "publicKey": "TBD",
+      "added": "2026-06"
+    },
+
+    {
+      "id": "bur-northeast-3",
+      "name": "BUR-NorthEast-3",
+      "status": "on-air",
+      "role": "Repeater",
+      "location": "TBD",
+      "hardware": "N/A",
+      "admin": "TBD",
+      "publicKey": "TBD",
+      "added": "2026-06"
+    }
+  ]
+}

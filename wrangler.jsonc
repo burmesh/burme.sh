@@ -1,0 +1,27 @@
+{
+  // Worker + Static Assets: the site is served from the Worker side. Cloudflare
+  // serves the files in ./public/ through the ASSETS binding, and `main` puts a
+  // Worker (src/index.js) in front of them. The Worker imports
+  // data/repeaters.json and renders the repeater list into the HTML via
+  // HTMLRewriter. (The old mc.networld.to deploy was assets-only, with no
+  // Worker script — here the Worker owns the request.)
+  "name": "burme-sh",
+  "main": "src/index.js",
+  "compatibility_date": "2026-01-17",
+  "assets": {
+    "directory": "./public/",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none",
+    // Run the Worker before serving static assets so its HTMLRewriter pass
+    // (repeater cards + counts) always runs on the HTML response.
+    "run_worker_first": true
+  },
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "burme.sh",
+      "custom_domain": true
+    }
+  ]
+}

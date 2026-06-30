@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://burme.sh/data/repeaters.schema.json",
+  "title": "Burlington Mesh repeaters",
+  "description": "Source of truth for the repeaters rendered on burme.sh. Add an entry and it appears on the site on the next deploy.",
+  "type": "object",
+  "required": ["repeaters"],
+  "additionalProperties": true,
+  "properties": {
+    "admins": {
+      "type": "object",
+      "description": "Reusable directory of operators, keyed by id. A repeater's `admin` field references one of these ids, so the same admin can be shared across repeaters.",
+      "additionalProperties": { "$ref": "#/$defs/admin" }
+    },
+    "repeaters": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/repeater" }
+    }
+  },
+  "$defs": {
+    "admin": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Operator display name / handle, e.g. \"A2X - 532A\"."
+        },
+        "publicKey": {
+          "type": ["string", "null"],
+          "description": "Operator's MeshCore public key (hex). When present, the card links to a meshcore:// contact-add for the admin."
+        }
+      }
+    },
+    "repeater": {
+      "type": "object",
+      "required": ["id", "name", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable slug, e.g. \"bur-chestnut\".",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name, e.g. \"BUR – Chestnut\"."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["on-air", "coming-soon", "offline"],
+          "description": "Drives the status badge on the card."
+        },
+        "role": {
+          "type": "string",
+          "description": "MeshCore role / blurb. Defaults to \"Repeater\" if omitted."
+        },
+        "location": { "type": "string" },
+        "hardware": { "type": "string" },
+        "admin": {
+          "type": "string",
+          "description": "Id of an entry in the top-level `admins` map (e.g. \"a2x\")."
+        },
+        "publicKey": {
+          "type": ["string", "null"],
+          "description": "Node's MeshCore public key (hex), or null until it is on the air."
+        },
+        "added": {
+          "type": "string",
+          "description": "When the node joined, e.g. \"2026-06\". Used to order newest-first."
+        }
+      }
+    }
+  }
+}

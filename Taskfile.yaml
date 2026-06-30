@@ -1,0 +1,10 @@
+version: '3'
+
+tasks:
+  run:
+    desc: Serve the site locally with Wrangler (Worker + static assets)
+    cmd: npx wrangler dev
+
+  deploy:
+    desc: Deploy to Cloudflare Workers
+    cmd: npx wrangler deploy

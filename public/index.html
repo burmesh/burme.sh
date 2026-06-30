@@ -1,0 +1,1615 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Burlington Mesh · Off-grid LoRa · burme.sh</title>
+
+    <meta
+      name="description"
+      content="Burlington Mesh (burme.sh) is a community off-grid LoRa mesh for Burlington, MA, built on MeshCore. A growing network of repeaters — the latest, BUR - Chestnut, is coming online. Learn what MeshCore is and how to join."
+    />
+    <meta name="theme-color" content="#0a0e14" />
+    <meta
+      name="robots"
+      content="noindex, nofollow, noarchive, nosnippet, noai, noimageai"
+    />
+    <link rel="canonical" href="https://burme.sh/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://burme.sh/" />
+    <meta property="og:title" content="Burlington Mesh · burme.sh" />
+    <meta
+      property="og:description"
+      content="A community off-grid LoRa mesh for Burlington, MA, built on MeshCore. Its latest repeater, BUR - Chestnut, is coming online. Learn what MeshCore is and how to join."
+    />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- Burlington Mesh logo (served from ./public/) -->
+    <link rel="icon" type="image/svg+xml" href="/burlington-mesh-logo.svg" />
+
+    <style>
+      /* ===================================================================
+         Design system tokens — "On The Air · Signal Waves RF"
+         A CRT-green field-station broadcast console glowing in the dark.
+         =================================================================== */
+      :root {
+        --bg: #0a0e14; /* deep night page background */
+        --bg-soft: #11161f; /* panel / soft surface */
+        --bg-card: #161d29; /* raised console card surface */
+        --border: #26303d; /* hairline border / grid lines */
+        --text: #e6edf3; /* primary text (AA on --bg) */
+        --text-dim: #9aa7b4; /* dim / secondary text */
+        --accent: #3fb950; /* CRT phosphor green */
+        --accent-bright: #56e06a; /* bright signal-green glow peaks */
+        --accent-dim: #2ea043; /* deep accent rings / strokes */
+        --warn: #d29922; /* amber warn / dial needle */
+        --trace: #7ee787; /* oscilloscope cyan-green trace */
+        --radius: 14px;
+        --maxw: 880px;
+        --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas,
+          monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      /* -------------------------------------------------------------------
+         Body + engineering "signal grid" background motif.
+         Gradient-only (zero image bytes): top green glow + fine 40px
+         graticule + larger 160px depth grid. Painted on a fixed pseudo
+         layer (no background-attachment:fixed -> kinder to weak mobiles)
+         and masked to fade toward the page bottom so it never fights text.
+         ------------------------------------------------------------------- */
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            1200px 600px at 50% -10%,
+            rgba(63, 185, 80, 0.1),
+            transparent 60%
+          ),
+          repeating-linear-gradient(
+            0deg,
+            rgba(63, 185, 80, 0.035) 0 1px,
+            transparent 1px 40px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(63, 185, 80, 0.035) 0 1px,
+            transparent 1px 40px
+          ),
+          repeating-linear-gradient(
+            0deg,
+            rgba(63, 185, 80, 0.02) 0 1px,
+            transparent 1px 160px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(63, 185, 80, 0.02) 0 1px,
+            transparent 1px 160px
+          );
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          black,
+          black 40%,
+          transparent 95%
+        );
+        mask-image: linear-gradient(
+          to bottom,
+          black,
+          black 40%,
+          transparent 95%
+        );
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* Accessible focus ring for keyboard users */
+      a:focus-visible,
+      [tabindex]:focus-visible {
+        outline: 2px solid var(--accent-bright);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+
+      .wrap {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ===================================================================
+         Sticky live-status strip — at-a-glance instrument cue
+         (STATION / BAND / MODE / PWR). Slim band above the hero.
+         =================================================================== */
+      .statusbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgba(10, 14, 20, 0.92);
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(6px);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+      }
+      .statusbar .wrap {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 22px;
+        padding-top: 9px;
+        padding-bottom: 9px;
+      }
+      .statusbar .si {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--text-dim);
+        white-space: nowrap;
+      }
+      .statusbar .si b {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .statusbar .si .k {
+        color: var(--accent);
+      }
+      .statusbar .si .live {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--warn);
+        box-shadow: 0 0 0 3px rgba(210, 153, 34, 0.18);
+      }
+
+      /* ===================================================================
+         Hero — station console with concentric broadcast waves.
+         Ring stagger encodes the real Advert timing (zero-hop / flood).
+         =================================================================== */
+      header {
+        padding: 60px 0 0;
+        text-align: center;
+      }
+
+      .console {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden; /* contain expanding rings, prevent x-scroll */
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background:
+          radial-gradient(
+            circle at 50% 38%,
+            rgba(63, 185, 80, 0.16),
+            transparent 60%
+          ),
+          var(--bg-soft);
+        padding: 44px 20px 40px;
+      }
+
+      /* Ultra-subtle CRT scanline veneer — sits behind content only */
+      .console::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          rgba(0, 0, 0, 0) 0 2px,
+          rgba(0, 0, 0, 0.06) 2px 3px
+        );
+        opacity: 0.6;
+      }
+
+      /* Antenna + radiating waves stage */
+      .antenna-stage {
+        position: relative;
+        width: 168px;
+        height: 168px;
+        margin: 0 auto 6px;
+        display: grid;
+        place-items: center;
+      }
+
+      .wave {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 160px;
+        height: 160px;
+        margin: -80px 0 0 -80px;
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        opacity: 0; /* reduced-motion override shows a static ring */
+        transform: scale(0.2);
+        pointer-events: none;
+      }
+
+      .antenna-svg {
+        position: relative;
+        width: 76px;
+        height: 76px;
+        filter: drop-shadow(0 0 6px rgba(63, 185, 80, 0.5));
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 13px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg);
+        color: var(--text-dim);
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .badge .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.2);
+      }
+      /* STANDBY state — amber, text+shape redundant (never color alone) */
+      .badge.pending {
+        color: var(--warn);
+        border-color: rgba(210, 153, 34, 0.4);
+      }
+      .badge.pending .dot {
+        background: var(--warn);
+        box-shadow: 0 0 0 3px rgba(210, 153, 34, 0.2);
+      }
+
+      header h1 {
+        font-size: clamp(2rem, 6vw, 3rem);
+        margin: 16px 0 6px;
+        letter-spacing: -0.02em;
+        text-shadow: 0 0 18px rgba(63, 185, 80, 0.25); /* phosphor bloom, large text only */
+      }
+
+      header .domain {
+        font-family: var(--mono);
+        color: var(--accent);
+        font-size: 1rem;
+        letter-spacing: 0.02em;
+      }
+
+      header p.lede {
+        max-width: 620px;
+        margin: 16px auto 0;
+        color: var(--text-dim);
+        font-size: 1.08rem;
+      }
+
+      /* Oscilloscope sweep divider — live signal trace from the antenna */
+      .scope {
+        width: 100%;
+        height: 40px;
+        display: block;
+        margin: 26px 0 0;
+        color: var(--accent);
+      }
+      .scope path.trace {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        filter: drop-shadow(0 0 4px rgba(63, 185, 80, 0.45));
+        stroke-dasharray: 1200;
+        stroke-dashoffset: 0;
+      }
+
+      /* ===================================================================
+         Sections
+         =================================================================== */
+      main {
+        padding: 8px 0 24px;
+      }
+
+      section {
+        padding: 44px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      section:last-of-type {
+        border-bottom: none;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        margin: 0 0 6px;
+        letter-spacing: -0.01em;
+      }
+
+      h2 + .sub {
+        margin: 0 0 22px;
+        color: var(--text-dim);
+      }
+
+      h3.subhead {
+        font-size: 0.78rem;
+        font-family: var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+        margin: 30px 0 14px;
+      }
+
+      p {
+        color: #c8d2dc;
+      }
+
+      /* ===================================================================
+         Console readout panels (Repeater details / Radio settings).
+         Left status rail + monospace technical values w/ accent left-tick.
+         Pure-CSS corner brackets add tactical character at zero asset cost.
+         =================================================================== */
+      .panel {
+        position: relative;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-soft);
+        overflow: hidden;
+      }
+      .panel::before,
+      .panel::after {
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .panel::before {
+        top: 6px;
+        left: 6px;
+        border-top: 2px solid var(--accent-dim);
+        border-left: 2px solid var(--accent-dim);
+      }
+      .panel::after {
+        bottom: 6px;
+        right: 6px;
+        border-bottom: 2px solid var(--accent-dim);
+        border-right: 2px solid var(--accent-dim);
+      }
+
+      .panel-cap {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        color: var(--text-dim);
+        padding: 11px 18px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(63, 185, 80, 0.04);
+      }
+      .panel-cap b {
+        color: var(--accent);
+      }
+
+      .panel dl {
+        margin: 0;
+        display: grid;
+        grid-template-columns: 190px 1fr;
+      }
+
+      .panel dt,
+      .panel dd {
+        margin: 0;
+        padding: 12px 18px;
+        border-top: 1px solid var(--border);
+      }
+      /* left status rail on each value row */
+      .panel dd {
+        color: var(--text);
+        border-left: 2px solid rgba(63, 185, 80, 0.28);
+      }
+      .panel dt {
+        color: var(--text-dim);
+        font-weight: 600;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: rgba(255, 255, 255, 0.012);
+      }
+
+      /* technical dd values get instrument-readout mono + tabular nums */
+      .panel dd.tech {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.01em;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .status .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.18);
+      }
+      .status.pending {
+        color: var(--warn);
+        font-family: var(--mono);
+        letter-spacing: 0.04em;
+      }
+      .status.pending .dot {
+        background: var(--warn);
+        box-shadow: 0 0 0 3px rgba(210, 153, 34, 0.18);
+      }
+
+      /* ----- Tuned dial for the 910.525 MHz Frequency row ----- */
+      .freq-dial {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .freq-readout {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 10px;
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+      .freq-readout .tune {
+        color: var(--text-dim);
+        font-size: 0.9rem;
+      }
+      .freq-readout .num {
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: var(--text);
+        text-shadow: 0 0 12px rgba(63, 185, 80, 0.28);
+      }
+      .freq-readout .num .unit {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-left: 4px;
+      }
+      .ruler {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        height: 30px;
+        color: var(--border);
+      }
+      .ruler .needle {
+        stroke: var(--warn);
+        stroke-width: 2;
+      }
+      .ruler .needle-head {
+        fill: var(--warn);
+      }
+
+      /* ===================================================================
+         Card grids (node roles) — with reused favicon-language glyphs
+         =================================================================== */
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .card {
+        position: relative;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-card);
+        padding: 20px;
+        transition:
+          border-color 0.18s ease,
+          transform 0.18s ease;
+      }
+      /* top hairline lights green on hover */
+      .card::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 14px;
+        right: 14px;
+        height: 2px;
+        background: var(--accent);
+        opacity: 0;
+        transition: opacity 0.18s ease;
+        border-radius: 2px;
+      }
+      .card:hover {
+        border-color: var(--accent-dim);
+        transform: translateY(-3px);
+      }
+      .card:hover::before {
+        opacity: 1;
+      }
+      /* highlight THIS repeater's role card to tie back to the hero */
+      .card.is-this {
+        border-color: rgba(63, 185, 80, 0.45);
+        background:
+          radial-gradient(
+            120% 80% at 100% 0%,
+            rgba(63, 185, 80, 0.08),
+            transparent 60%
+          ),
+          var(--bg-card);
+      }
+      .card-glyph {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 26px;
+        height: 26px;
+        color: var(--accent);
+        opacity: 0.85;
+      }
+      .card h3 {
+        margin: 0 0 6px;
+        font-size: 1.05rem;
+        padding-right: 30px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--text-dim);
+        font-size: 0.95rem;
+      }
+      .card .role-tag {
+        display: inline-block;
+        margin-bottom: 10px;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      /* ===================================================================
+         Steps — "preset knob" badges connected by a dotted signal path
+         =================================================================== */
+      ol.steps {
+        counter-reset: step;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 14px;
+        position: relative;
+      }
+      ol.steps li {
+        position: relative;
+        padding: 16px 18px 16px 64px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-soft);
+      }
+      /* dotted vertical signal path linking the knobs */
+      ol.steps li:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        left: 31px;
+        top: 46px;
+        bottom: -14px;
+        width: 0;
+        border-left: 2px dotted var(--accent-dim);
+        opacity: 0.5;
+      }
+      ol.steps li::before {
+        counter-increment: step;
+        content: counter(step);
+        position: absolute;
+        left: 16px;
+        top: 14px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background:
+          radial-gradient(
+            circle at 35% 30%,
+            rgba(86, 224, 106, 0.35),
+            rgba(63, 185, 80, 0.1) 60%
+          ),
+          var(--bg-card);
+        border: 2px solid var(--accent-dim);
+        color: var(--accent);
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+        font-size: 0.95rem;
+        z-index: 1;
+      }
+      ol.steps li strong {
+        display: block;
+        color: var(--text);
+        margin-bottom: 2px;
+      }
+      ol.steps li span {
+        color: var(--text-dim);
+        font-size: 0.95rem;
+      }
+
+      /* ===================================================================
+         Resources link cards — mini signal-bars glyph + animated left edge
+         =================================================================== */
+      .links {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+      .links a.link {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 16px 18px 16px 46px;
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-soft);
+        transition:
+          border-color 0.15s ease,
+          border-left-color 0.15s ease,
+          transform 0.15s ease;
+      }
+      .links a.link .bars {
+        position: absolute;
+        left: 16px;
+        top: 18px;
+        width: 18px;
+        height: 16px;
+        color: var(--accent);
+      }
+      .links a.link:hover {
+        text-decoration: none;
+        border-color: var(--accent-dim);
+        border-left-color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .links a.link .t {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .links a.link .d {
+        color: var(--text-dim);
+        font-size: 0.88rem;
+      }
+      .links a.link .host {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        color: var(--accent);
+        margin-top: 3px;
+      }
+
+      /* ===================================================================
+         Transmission advisory (was .note) — amber-railed callout
+         =================================================================== */
+      .note {
+        margin-top: 16px;
+        padding: 14px 16px;
+        border: 1px solid rgba(210, 153, 34, 0.3);
+        border-left: 3px solid var(--warn);
+        background: rgba(210, 153, 34, 0.06);
+        border-radius: 0 8px 8px 0;
+        color: var(--text-dim);
+        font-size: 0.92rem;
+      }
+      .note .advisory-tag {
+        display: block;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        color: var(--warn);
+        margin-bottom: 6px;
+      }
+      .note strong {
+        color: var(--text);
+      }
+
+      /* ===================================================================
+         Node identity — public key row + "scan to add" import block.
+         Key wraps cleanly (break-all) so a long hex value never overflows.
+         The QR slot is CSS-only here; drop an inline <svg>/data: QR in later.
+         =================================================================== */
+      .panel dd.key {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+        /* spaced byte groups wrap at the spaces, keeping each byte intact */
+        overflow-wrap: anywhere;
+      }
+      .key-pending {
+        color: var(--text-dim);
+        font-style: italic;
+      }
+
+      .identity-import {
+        margin-top: 16px;
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-soft);
+      }
+      .qr-slot {
+        flex: 0 0 auto;
+        width: 112px;
+        height: 112px;
+        display: grid;
+        place-items: center;
+        gap: 6px;
+        border: 2px dashed var(--border);
+        border-radius: 10px;
+        background: rgba(63, 185, 80, 0.03);
+        color: var(--text-dim);
+      }
+      .qr-slot .qr-pending {
+        width: 40px;
+        height: 40px;
+        opacity: 0.7;
+      }
+      .qr-slot .qr-pending-label {
+        font-family: var(--mono);
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .qr-copy .tag {
+        display: block;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        color: var(--accent);
+        margin-bottom: 2px;
+      }
+      .qr-copy p {
+        margin: 4px 0 0;
+        color: var(--text-dim);
+        font-size: 0.92rem;
+      }
+
+      /* ===================================================================
+         Administrator — secondary contact info, deliberately low-key:
+         compact, dim, and below the repeater's own details.
+         =================================================================== */
+      .admin {
+        margin-top: 28px;
+        padding: 14px 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.015);
+        font-size: 0.9rem;
+      }
+      .admin-eyebrow {
+        display: block;
+        font-family: var(--mono);
+        font-size: 0.66rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin-bottom: 4px;
+      }
+      .admin-name {
+        display: block;
+        color: var(--text);
+        font-weight: 600;
+      }
+      .admin-key {
+        display: block;
+        margin-top: 4px;
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        line-height: 1.5;
+        color: var(--text-dim);
+        overflow-wrap: anywhere;
+      }
+      .admin-key:hover {
+        color: var(--accent);
+      }
+      .admin-qr-toggle {
+        margin-top: 12px;
+      }
+      .admin-qr-toggle > summary {
+        cursor: pointer;
+        width: fit-content;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        color: var(--accent);
+      }
+      .admin-qr-toggle > summary:hover {
+        text-decoration: underline;
+      }
+      .admin-qr {
+        width: 132px;
+        height: 132px;
+        margin-top: 12px;
+        padding: 8px;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+      .admin-qr .qr-img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      /* ===================================================================
+         Footer — centered antenna mark + standby micro-caption
+         =================================================================== */
+      footer {
+        padding: 36px 0 56px;
+        text-align: center;
+        color: var(--text-dim);
+        font-size: 0.9rem;
+        border-top: 1px solid var(--border);
+      }
+      footer .foot-antenna {
+        width: 34px;
+        height: 34px;
+        color: var(--accent);
+        margin-bottom: 8px;
+        filter: drop-shadow(0 0 5px rgba(63, 185, 80, 0.4));
+      }
+      footer .onair {
+        display: block;
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--warn);
+        margin-bottom: 10px;
+      }
+      footer a {
+        color: var(--text-dim);
+        text-decoration: underline;
+      }
+      footer a:hover {
+        color: var(--accent);
+      }
+
+      /* ===================================================================
+         Responsive
+         =================================================================== */
+      @media (max-width: 600px) {
+        /* Snug the gutters a touch on phones */
+        .wrap {
+          padding: 0 16px;
+        }
+
+        /* Status strip: keep it to ONE tidy line and scroll horizontally
+           rather than wrapping into a tall multi-line sticky bar. A right
+           edge fade hints that more readouts are available off-screen. */
+        .statusbar {
+          font-size: 0.66rem;
+        }
+        .statusbar .wrap {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          gap: 0 16px;
+          padding-right: 18px;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          /* narrow trailing fade hints at more readouts off-screen without
+             dimming the last value (PWR SOLAR) once scrolled to the end */
+          -webkit-mask-image: linear-gradient(
+            to right,
+            black calc(100% - 18px),
+            transparent
+          );
+          mask-image: linear-gradient(
+            to right,
+            black calc(100% - 18px),
+            transparent
+          );
+        }
+        .statusbar .wrap::-webkit-scrollbar {
+          display: none;
+        }
+
+        /* Tighten the vertical rhythm so there's less scrolling */
+        header {
+          padding: 36px 0 0;
+        }
+        .console {
+          padding: 32px 16px 30px;
+          border-radius: 16px;
+        }
+        .antenna-stage {
+          width: 140px;
+          height: 140px;
+        }
+        header h1 {
+          font-size: clamp(1.85rem, 8vw, 2.4rem);
+        }
+        header p.lede {
+          font-size: 1rem;
+        }
+        .scope {
+          margin-top: 20px;
+        }
+        section {
+          padding: 32px 0;
+        }
+        h2 {
+          font-size: 1.35rem;
+        }
+
+        /* Detail panels collapse to a single column */
+        .panel dl {
+          grid-template-columns: 1fr;
+        }
+        .panel dt {
+          padding-bottom: 2px;
+          border-top: 1px solid var(--border);
+          /* continue the value rail up through the label so the collapsed
+             single-column row shows one unbroken instrument rail */
+          border-left: 2px solid rgba(63, 185, 80, 0.28);
+        }
+        .panel dd {
+          border-top: none;
+          padding-top: 4px;
+        }
+
+        /* Repeater cards stack to a single column on phones */
+        .repeater-grid {
+          grid-template-columns: 1fr;
+        }
+
+        /* Slightly tighter step rows; keep the knob + signal path aligned */
+        ol.steps li {
+          padding: 14px 16px 14px 58px;
+        }
+
+        /* Stack the scan-to-add block: QR on top, copy beneath */
+        .identity-import {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      /* ===================================================================
+         Motion — all transform/opacity based, GPU-cheap. Enabled only
+         when the user has NOT requested reduced motion.
+         =================================================================== */
+      @media (prefers-reduced-motion: no-preference) {
+        /* expanding/fading broadcast rings. Stagger encodes the real
+           Advert timing: zero-hop 12h / flood 48h advertisement cadence. */
+        .wave {
+          animation: broadcast 4s ease-out infinite;
+        }
+        .wave.w1 {
+          animation-delay: 0s;
+        }
+        .wave.w2 {
+          animation-delay: 1s;
+        }
+        .wave.w3 {
+          animation-delay: 2s;
+        }
+        .wave.w4 {
+          animation-delay: 3s;
+        }
+        @keyframes broadcast {
+          from {
+            transform: scale(0.2);
+            opacity: 0.6;
+          }
+          to {
+            transform: scale(1);
+            opacity: 0;
+          }
+        }
+
+        /* oscilloscope sweep — trace "draws" left to right */
+        .scope path.trace {
+          animation: sweep 3s linear infinite;
+        }
+        @keyframes sweep {
+          from {
+            stroke-dashoffset: 1200;
+          }
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+
+        /* amber STANDBY dot slow pulse */
+        .badge.pending .dot,
+        .status.pending .dot,
+        .statusbar .si .live {
+          animation: standby 2s ease-in-out infinite;
+        }
+        @keyframes standby {
+          0%,
+          100% {
+            opacity: 1;
+            box-shadow: 0 0 0 3px rgba(210, 153, 34, 0.18);
+          }
+          50% {
+            opacity: 0.45;
+            box-shadow: 0 0 0 5px rgba(210, 153, 34, 0.05);
+          }
+        }
+
+        /* gentle hero halo glow breath */
+        .antenna-svg {
+          animation: bloom 6s ease-in-out infinite;
+        }
+        @keyframes bloom {
+          0%,
+          100% {
+            filter: drop-shadow(0 0 6px rgba(63, 185, 80, 0.5));
+          }
+          50% {
+            filter: drop-shadow(0 0 12px rgba(63, 185, 80, 0.75));
+          }
+        }
+      }
+
+      /* Airtight reduced-motion discipline: rings collapse to a single
+         static ring at rest, traces stay drawn, dots are steady glows. */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+          scroll-behavior: auto !important;
+        }
+        .wave {
+          opacity: 0.18;
+          transform: scale(0.62);
+        }
+        .wave.w1,
+        .wave.w3,
+        .wave.w4 {
+          display: none; /* show just one resting ring */
+        }
+        .scope path.trace {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /* ===================================================================
+         Brand logo + data-driven repeater cards
+         =================================================================== */
+      .hero-logo {
+        display: block;
+        width: min(300px, 78%);
+        height: auto;
+        margin: 0 auto 10px;
+        filter: drop-shadow(0 0 18px rgba(63, 185, 80, 0.18));
+      }
+
+      /* Visually-hidden but available to assistive tech / document outline */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* Repeater cards: at most two per row so each stays wide enough for the
+         detail list (public keys are long). A lone trailing card spans the
+         full row instead of leaving a gap; collapses to one column on phones. */
+      .repeater-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .repeater-grid > .repeater:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+      }
+
+      /* Repeater cards reuse .card; this adds the per-node detail list */
+      .repeater .repeater-status {
+        margin: 2px 0 12px;
+      }
+      .repeater-dl {
+        margin: 0;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 6px 14px;
+        font-size: 0.9rem;
+      }
+      .repeater-dl dt {
+        margin: 0;
+        color: var(--text-dim);
+        font-weight: 600;
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        align-self: start;
+        padding-top: 1px;
+      }
+      .repeater-dl dd {
+        margin: 0;
+        color: var(--text);
+      }
+      .repeater-dl dd.key {
+        overflow-wrap: anywhere;
+        font-size: 0.8rem;
+        color: var(--text-dim);
+      }
+
+      /* OFFLINE status — dim, redundant with text/shape (never color alone) */
+      .status.off {
+        color: var(--text-dim);
+        font-family: var(--mono);
+        letter-spacing: 0.04em;
+      }
+      .status.off .dot {
+        background: var(--text-dim);
+        box-shadow: 0 0 0 3px rgba(154, 167, 180, 0.15);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sticky live-status strip: at-a-glance network cue -->
+    <div class="statusbar" aria-label="Network status">
+      <div class="wrap">
+        <span class="si"><span class="live" aria-hidden="true"></span><span class="k">NETWORK</span>&nbsp;<b>BURLINGTON</b></span>
+        <span class="si"><span class="k">REPEATERS</span>&nbsp;<b data-repeater-count>—</b></span>
+        <span class="si"><span class="k">BAND</span>&nbsp;<b>910.525&nbsp;MHz</b></span>
+        <span class="si"><span class="k">MODE</span>&nbsp;<b>LoRa&nbsp;Mesh</b></span>
+        <span class="si"><span class="k">PRESET</span>&nbsp;<b>USA&nbsp;/&nbsp;Canada</b></span>
+      </div>
+    </div>
+
+    <header>
+      <div class="wrap">
+        <div class="console">
+          <!-- Brand logo (served from ./public/burlington-mesh-logo.svg) -->
+          <img
+            class="hero-logo"
+            src="/burlington-mesh-logo.svg"
+            alt="Burlington Mesh"
+            width="300"
+            height="300"
+          />
+
+          <span class="badge"
+            ><span class="dot" aria-hidden="true"></span> Burlington, MA ·
+            MeshCore mesh</span
+          >
+          <h1 class="sr-only">Burlington Mesh</h1>
+          <div class="domain">burme.sh</div>
+          <p class="lede">
+            A community off-grid <strong>LoRa</strong> mesh across Burlington,
+            Massachusetts, built on
+            <a href="https://meshcore.io" rel="noopener">MeshCore</a>. A growing
+            network of repeaters relays messages with no cell towers, Wi-Fi, or
+            internet — the latest,
+            <strong>BUR&nbsp;-&nbsp;Chestnut</strong>, is coming online now.
+          </p>
+
+          <!-- Oscilloscope sweep divider: live signal trace from antenna -->
+          <svg
+            class="scope"
+            viewBox="0 0 1200 40"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              class="trace"
+              d="M0 20 H360 q15 0 22 -16 q7 16 22 16 q15 0 22 -28 q7 28 22 28 q15 0 22 -10 q7 10 22 10 q15 0 22 -5 q7 5 22 5 H1200"
+            />
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- What is MeshCore -->
+      <section id="about">
+        <h2>What is MeshCore?</h2>
+        <p class="sub">
+          Off-grid messaging that needs no cell towers, Wi-Fi, or internet.
+        </p>
+        <p>
+          <a href="https://meshcore.io" rel="noopener">MeshCore</a> is an
+          open-source firmware and app ecosystem for long-range, low-power
+          communication over <abbr title="Long Range radio">LoRa</abbr>. Small,
+          inexpensive radios relay text messages for one another, forming a
+          self-healing mesh that keeps working when conventional infrastructure
+          is unavailable — useful for emergencies, events, hiking, and community
+          resilience.
+        </p>
+        <p>
+          Unlike a simple flood network, MeshCore uses lightweight managed
+          routing: nodes learn paths through the mesh, so messages take
+          efficient hops instead of being rebroadcast by everyone.
+          <strong>Repeaters</strong> like this one are the backbone — placed
+          high and powered around the clock, they carry traffic over distances a
+          handheld node could never reach alone.
+        </p>
+      </section>
+
+      <!-- Repeaters — rendered by the Worker from data/repeaters.json -->
+      <section id="repeaters">
+        <h2>Repeaters</h2>
+        <p class="sub">
+          Repeater nodes across Burlington, MA ·
+          <b data-repeater-count>—</b> total. Add one in
+          <span class="mono">data/repeaters.json</span> and it appears here
+          automatically.
+        </p>
+
+        <!-- The Worker fills this container (on-air first, newest-first). It is
+             empty until the Worker's HTMLRewriter pass runs — see
+             run_worker_first in wrangler.jsonc. -->
+        <div class="repeater-grid" data-repeaters></div>
+
+        <h3 class="subhead">Network radio settings</h3>
+        <p class="sub" style="margin-top: -10px">
+          Every Burlington Mesh repeater shares the
+          <strong>USA / Canada</strong> MeshCore preset.
+        </p>
+        <div class="panel">
+          <div class="panel-cap"><b>//</b> RF PARAMETERS</div>
+          <dl>
+            <dt>Preset</dt>
+            <dd>USA / Canada (recommended)</dd>
+
+            <dt>Frequency</dt>
+            <dd>
+              <!-- Tuned-dial treatment: ruler + parked amber needle + glyphs -->
+              <div class="freq-dial">
+                <span class="freq-readout">
+                  <span class="tune" aria-hidden="true">&laquo;</span>
+                  <span class="num"
+                    >910.525<span class="unit">MHz</span></span
+                  >
+                  <span class="tune" aria-hidden="true">&raquo;</span>
+                </span>
+                <svg
+                  class="ruler"
+                  viewBox="0 0 320 30"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <g stroke="currentColor" stroke-width="1">
+                    <line x1="10" y1="22" x2="10" y2="14" />
+                    <line x1="30" y1="22" x2="30" y2="18" />
+                    <line x1="50" y1="22" x2="50" y2="14" />
+                    <line x1="70" y1="22" x2="70" y2="18" />
+                    <line x1="90" y1="22" x2="90" y2="14" />
+                    <line x1="110" y1="22" x2="110" y2="18" />
+                    <line x1="130" y1="22" x2="130" y2="14" />
+                    <line x1="150" y1="22" x2="150" y2="18" />
+                    <line x1="170" y1="22" x2="170" y2="14" />
+                    <line x1="190" y1="22" x2="190" y2="18" />
+                    <line x1="210" y1="22" x2="210" y2="14" />
+                    <line x1="230" y1="22" x2="230" y2="18" />
+                    <line x1="250" y1="22" x2="250" y2="14" />
+                    <line x1="270" y1="22" x2="270" y2="18" />
+                    <line x1="290" y1="22" x2="290" y2="14" />
+                    <line x1="310" y1="22" x2="310" y2="18" />
+                    <line x1="2" y1="22" x2="318" y2="22" stroke-width="1" />
+                  </g>
+                  <!-- parked amber needle over the tuned mark -->
+                  <line class="needle" x1="170" y1="4" x2="170" y2="24" />
+                  <polygon
+                    class="needle-head"
+                    points="170,8 165,3 175,3"
+                  />
+                </svg>
+              </div>
+            </dd>
+
+            <dt>Bandwidth</dt>
+            <dd class="tech">62.5 kHz</dd>
+
+            <dt>Spreading factor</dt>
+            <dd class="tech">7</dd>
+
+            <dt>Coding rate</dt>
+            <dd class="tech">5</dd>
+
+            <dt>Advert (zero hop)</dt>
+            <dd class="tech">12 hours</dd>
+
+            <dt>Advert (flood)</dt>
+            <dd class="tech">48 hours</dd>
+          </dl>
+        </div>
+
+        <p class="note">
+          <span class="advisory-tag" aria-hidden="true">// TRANSMISSION ADVISORY</span>
+          <strong>Tuning in?</strong> Set your MeshCore client to the
+          <strong>USA / Canada</strong> preset with the parameters above and the
+          nearest Burlington Mesh repeater will appear in your contacts when
+          you're in range. Nodes marked <em>Coming soon</em> aren't on the air
+          yet.
+        </p>
+      </section>
+
+      <!-- How to join -->
+      <section id="join">
+        <h2>Join the mesh</h2>
+        <p class="sub">From zero to on-air in four steps.</p>
+        <ol class="steps">
+          <li>
+            <strong>Get a supported radio</strong>
+            <span
+              >Any MeshCore-compatible LoRa board for the US band — e.g. Heltec
+              V3, RAK WisBlock, LilyGO T-Deck, or a Seeed SenseCAP solar
+              node.</span
+            >
+          </li>
+          <li>
+            <strong>Flash MeshCore firmware</strong>
+            <span
+              >Use the
+              <a href="https://flasher.meshcore.io" rel="noopener"
+                >web flasher</a
+              >
+              to install the <em>Companion</em> firmware on your node — no
+              toolchain required.</span
+            >
+          </li>
+          <li>
+            <strong>Install a client</strong>
+            <span
+              >Pair your node with the MeshCore app (Android, iOS, or web
+              client) over Bluetooth, USB, or Wi-Fi. Download links are at
+              <a href="https://meshcore.io" rel="noopener">meshcore.io</a
+              >.</span
+            >
+          </li>
+          <li>
+            <strong>Set the radio preset</strong>
+            <span
+              >Choose the <strong>USA / Canada</strong> preset with the
+              parameters shown above. Once you're in range, the nearest
+              <strong>Burlington Mesh</strong> repeater will appear in your
+              contact list and relay your messages.</span
+            >
+          </li>
+        </ol>
+      </section>
+
+      <!-- Node roles -->
+      <section id="roles">
+        <h2>MeshCore node roles</h2>
+        <p class="sub">The building blocks of a MeshCore network.</p>
+        <div class="grid">
+          <div class="card">
+            <!-- Companion: handheld + wave -->
+            <svg class="card-glyph" viewBox="0 0 24 24" aria-hidden="true">
+              <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="6" y="3" width="9" height="18" rx="2" />
+                <path d="M17 8a5 5 0 0 1 0 8M19.5 6a8 8 0 0 1 0 12" />
+              </g>
+            </svg>
+            <span class="role-tag">Companion</span>
+            <h3>Your personal node</h3>
+            <p>
+              A radio paired to your phone or computer. You read and send
+              messages through the client app; the node handles the radio.
+            </p>
+          </div>
+          <div class="card is-this">
+            <!-- Repeater: mast + double-arc (reuses favicon language) -->
+            <svg class="card-glyph" viewBox="0 0 24 24" aria-hidden="true">
+              <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+                <path d="M12 13v8" />
+                <circle cx="12" cy="11" r="1.4" fill="currentColor" stroke="none" />
+                <path d="M8.5 7.5a5 5 0 0 0 0 7M15.5 7.5a5 5 0 0 1 0 7" />
+              </g>
+            </svg>
+            <span class="role-tag">Repeater</span>
+            <h3>Range extender</h3>
+            <p>
+              An always-on node — like this one — that forwards traffic between
+              others, stretching the mesh across a town or region.
+            </p>
+          </div>
+          <div class="card">
+            <!-- Room Server: stacked layers -->
+            <svg class="card-glyph" viewBox="0 0 24 24" aria-hidden="true">
+              <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3 21 8 12 13 3 8 12 3z" />
+                <path d="M3 12l9 5 9-5" />
+                <path d="M3 16l9 5 9-5" />
+              </g>
+            </svg>
+            <span class="role-tag">Room Server</span>
+            <h3>Group chat &amp; bulletins</h3>
+            <p>
+              Hosts persistent channels and stores messages, so members can
+              catch up on conversations even after being offline.
+            </p>
+          </div>
+          <div class="card">
+            <!-- Sensor: pulse line -->
+            <svg class="card-glyph" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M2 13h4l2-7 4 14 2-9 2 4h6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span class="role-tag">Sensor</span>
+            <h3>Telemetry</h3>
+            <p>
+              Reports readings such as temperature, voltage, or GPS over the
+              mesh — handy for monitoring remote, off-grid equipment.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Resources -->
+      <section id="resources">
+        <h2>Resources</h2>
+        <p class="sub">Everything you need to build, flash, and explore.</p>
+        <div class="links">
+          <a class="link" href="https://meshcore.io" rel="noopener">
+            <svg class="bars" viewBox="0 0 18 16" aria-hidden="true">
+              <g fill="currentColor">
+                <rect x="0" y="11" width="3" height="5" />
+                <rect x="5" y="7" width="3" height="9" />
+                <rect x="10" y="3" width="3" height="13" />
+                <rect x="15" y="0" width="3" height="16" />
+              </g>
+            </svg>
+            <span class="t">MeshCore project →</span>
+            <span class="d">Official site, apps, and documentation</span>
+            <span class="host">meshcore.io</span>
+          </a>
+          <a class="link" href="https://flasher.meshcore.io" rel="noopener">
+            <svg class="bars" viewBox="0 0 18 16" aria-hidden="true">
+              <g fill="currentColor">
+                <rect x="0" y="11" width="3" height="5" />
+                <rect x="5" y="7" width="3" height="9" />
+                <rect x="10" y="3" width="3" height="13" />
+                <rect x="15" y="0" width="3" height="16" />
+              </g>
+            </svg>
+            <span class="t">Web flasher →</span>
+            <span class="d">Install firmware from your browser</span>
+            <span class="host">flasher.meshcore.io</span>
+          </a>
+          <a
+            class="link"
+            href="https://github.com/ripplebiz/MeshCore"
+            rel="noopener"
+          >
+            <svg class="bars" viewBox="0 0 18 16" aria-hidden="true">
+              <g fill="currentColor">
+                <rect x="0" y="11" width="3" height="5" />
+                <rect x="5" y="7" width="3" height="9" />
+                <rect x="10" y="3" width="3" height="13" />
+                <rect x="15" y="0" width="3" height="16" />
+              </g>
+            </svg>
+            <span class="t">Source on GitHub →</span>
+            <span class="d">Firmware, releases, and issues</span>
+            <span class="host">github.com/ripplebiz/MeshCore</span>
+          </a>
+          <a
+            class="link"
+            href="https://www.reddit.com/r/meshcore/"
+            rel="noopener"
+          >
+            <svg class="bars" viewBox="0 0 18 16" aria-hidden="true">
+              <g fill="currentColor">
+                <rect x="0" y="11" width="3" height="5" />
+                <rect x="5" y="7" width="3" height="9" />
+                <rect x="10" y="3" width="3" height="13" />
+                <rect x="15" y="0" width="3" height="16" />
+              </g>
+            </svg>
+            <span class="t">r/MeshCore →</span>
+            <span class="d">Community discussion and help</span>
+            <span class="host">reddit.com/r/meshcore</span>
+          </a>
+          <a class="link" href="https://www.seeedstudio.com" rel="noopener">
+            <svg class="bars" viewBox="0 0 18 16" aria-hidden="true">
+              <g fill="currentColor">
+                <rect x="0" y="11" width="3" height="5" />
+                <rect x="5" y="7" width="3" height="9" />
+                <rect x="10" y="3" width="3" height="13" />
+                <rect x="15" y="0" width="3" height="16" />
+              </g>
+            </svg>
+            <span class="t">SenseCAP hardware →</span>
+            <span class="d">Seeed Studio solar LoRa nodes</span>
+            <span class="host">seeedstudio.com</span>
+          </a>
+          <a class="link" href="https://bostonme.sh" rel="noopener">
+            <svg class="bars" viewBox="0 0 18 16" aria-hidden="true">
+              <g fill="currentColor">
+                <rect x="0" y="11" width="3" height="5" />
+                <rect x="5" y="7" width="3" height="9" />
+                <rect x="10" y="3" width="3" height="13" />
+                <rect x="15" y="0" width="3" height="16" />
+              </g>
+            </svg>
+            <span class="t">Boston Mesh →</span>
+            <span class="d">Neighboring MeshCore network · bostonme.sh</span>
+            <span class="host">bostonme.sh</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <!-- Centered antenna mark ties the bottom back to the hero -->
+        <svg class="foot-antenna" viewBox="0 0 24 24" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M12 13v8" />
+            <circle cx="12" cy="11" r="1.6" fill="currentColor" stroke="none" />
+            <path d="M8.5 7.5a5 5 0 0 0 0 7M15.5 7.5a5 5 0 0 1 0 7" />
+            <path d="M6 5a8 8 0 0 0 0 12M18 5a8 8 0 0 1 0 12" />
+          </g>
+        </svg>
+        <span class="onair">Standby · Off Air</span>
+        <p>
+          <strong>burme.sh</strong> — the Burlington Mesh, an off-grid LoRa
+          network for Burlington, MA.<br />
+          Built on <a href="https://meshcore.io" rel="noopener">MeshCore</a> ·
+          neighbor of the
+          <a href="https://bostonme.sh" rel="noopener">Boston Mesh</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

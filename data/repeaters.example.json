@@ -1,0 +1,49 @@
+{
+  "$schema": "./repeaters.schema.json",
+  "_comment": "TEMPLATE — copy entries into repeaters.json and replace EXAMPLE values with real data. `admins` is a reusable directory; a repeater's `admin` is an id into it, so several repeaters can share one operator (see example-op below).",
+  "admins": {
+    "a2x": {
+      "name": "A2X - 532A",
+      "publicKey": "532afc4e41e5dff06e7278b4510fef304d6da09b92c17df9c7c34c7d1dc69034"
+    },
+    "example-op": {
+      "name": "REPLACE ME - Operator handle",
+      "publicKey": "REPLACE ME - full hex public key (or null)"
+    }
+  },
+  "repeaters": [
+    {
+      "id": "example-town-common",
+      "name": "EXAMPLE - Town Common",
+      "status": "on-air",
+      "role": "Repeater (store-and-forward relay)",
+      "location": "REPLACE ME - street / landmark, Burlington, MA",
+      "hardware": "REPLACE ME - e.g. Heltec V3 / RAK WisBlock",
+      "admin": "example-op",
+      "publicKey": "REPLACE ME - full hex public key",
+      "added": "2025-01"
+    },
+    {
+      "id": "example-pine-hill",
+      "name": "EXAMPLE - Pine Hill",
+      "status": "on-air",
+      "role": "Repeater (store-and-forward relay)",
+      "location": "REPLACE ME - street / landmark, Burlington, MA",
+      "hardware": "REPLACE ME",
+      "admin": "example-op",
+      "publicKey": "REPLACE ME - full hex public key",
+      "added": "2025-08"
+    },
+    {
+      "id": "bur-chestnut",
+      "name": "BUR - Chestnut",
+      "status": "coming-soon",
+      "role": "Repeater (store-and-forward relay)",
+      "location": "Corner of Chestnut Ave & Hershey Road, Burlington, MA",
+      "hardware": "SenseCAP Solar Node P1-Pro (solar / battery powered)",
+      "admin": "a2x",
+      "publicKey": null,
+      "added": "2026-06"
+    }
+  ]
+}
