@@ -4,7 +4,12 @@
     "a2x": {
       "name": "A2X - 532A",
       "publicKey": "532afc4e41e5dff06e7278b4510fef304d6da09b92c17df9c7c34c7d1dc69034"
+    },
+    "mnk": {
+      "name": "MNK-home",
+      "publicKey": "b1980469771c811218166d2177cabbd70271fa9bc4fc928ac98c8652cf8f2690"
     }
+
   },
   "repeaters": [
     {
@@ -46,7 +51,7 @@
       "status": "on-air",
       "role": "Repeater",
       "location": "42.522446, -71.187099",
-      "hardware": "N/A",
+      "hardware": "wisblock 4641",
       "admin": "mnk",
       "publicKey": "9f59b3da3cb646abb3d57efbc8b6955026a87439553ea40ddca64f07b1d1f53a",
       "added": "2026-06"
@@ -55,9 +60,9 @@
       "id": "mnk-room",
       "name": "MNK-room",
       "status": "on-air",
-      "role": "Room + Repeater",
+      "role": "Room Server + Repeater",
       "location": "42.52305, -71.18627",
-      "hardware": "N/A",
+      "hardware": "Generic ESP32",
       "admin": "mnk",
       "publicKey": "9e09969d71ce273a0dd8ab0eba52959b50a6c0948881a64b29ae19bac348875d",
       "added": "2026-06"
@@ -68,7 +73,7 @@
       "status": "on-air",
       "role": "Repeater",
       "location": "42.519877, -71.178434",
-      "hardware": "N/A",
+      "hardware": "wisblock 4641",
       "admin": "mnk",
       "publicKey": "9d5640a0d6e5d4d3c29a8c1801e6863ad92998a7a7ecb8b14c248b93947ba396",
       "added": "2026-06"
@@ -79,7 +84,7 @@
       "status": "on-air",
       "role": "Repeater",
       "location": "42.527644, -71.185513",
-      "hardware": "N/A",
+      "hardware": "wisblock 4641",
       "admin": "mnk",
       "publicKey": "952eb78123aa84356f64a95f4ecbbba74f36c86e527fa32428c94a199bdbebe8",
       "added": "2026-06"
@@ -90,7 +95,7 @@
       "status": "on-air",
       "role": "Repeater",
       "location": "42.478918, -71.224950",
-      "hardware": "N/A",
+      "hardware": "wisblock 3401 - 1 W",
       "admin": "mnk",
       "publicKey": "8be42783bc675edd43e25949f62e4d46b07fd5c0588a4efcf057dcda85efb0fd",
       "added": "2026-06"
@@ -101,7 +106,7 @@
       "status": "on-air",
       "role": "Repeater",
       "location": "42.522279, -71.186904",
-      "hardware": "N/A",
+      "hardware": "wisblock 4641",
       "admin": "mnk",
       "publicKey": "9f7a1f1d052796b315270fd10bb29a87f1c889aa1d1af96edab7841a1eef15ff",
       "added": "2026-06"
@@ -113,7 +118,7 @@
       "status": "on-air",
       "role": "Repeater",
       "location": "42.442870, -71.183010",
-      "hardware": "N/A",
+      "hardware": "wisblock 4641",
       "admin": "mnk",
       "publicKey": "873b56d121a505cec4ea78a47dca751b66f9a407a258f3bff0d3c6f7dd21a4ec",
       "added": "2026-06"
