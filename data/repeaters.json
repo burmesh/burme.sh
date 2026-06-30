@@ -28,9 +28,9 @@
       "status": "on-air",
       "role": "Repeater",
       "location": "Fox Hill Neighbourhood, Burlington, MA",
-      "hardware": "N/A",
-      "admin": "TBD",
-      "publicKey": "TBD",
+      "hardware": "heltec v4",
+      "admin": "SC Mobile",
+      "publicKey": "b16ba51b50f06b6dca9b0bda7e0d38291fa5dca5a1c7a0a28c013c91eb48b62a",
       "added": "2026-06"
     },
     {
