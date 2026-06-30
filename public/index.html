@@ -7,7 +7,7 @@
 
     <meta
       name="description"
-      content="Burlington Mesh (burme.sh) is a community off-grid LoRa mesh for Burlington, MA, built on MeshCore. A growing network of repeaters — the latest, BUR - Chestnut, is coming online. Learn what MeshCore is and how to join."
+      content="Burlington Mesh (burme.sh) is a community off-grid LoRa mesh for Burlington, MA, built on MeshCore. A growing network of repeaters relays messages with no cell towers, Wi-Fi, or internet. Learn what MeshCore is and how to join."
     />
     <meta name="theme-color" content="#0a0e14" />
     <meta
@@ -21,7 +21,7 @@
     <meta property="og:title" content="Burlington Mesh · burme.sh" />
     <meta
       property="og:description"
-      content="A community off-grid LoRa mesh for Burlington, MA, built on MeshCore. Its latest repeater, BUR - Chestnut, is coming online. Learn what MeshCore is and how to join."
+      content="A community off-grid LoRa mesh for Burlington, MA, built on MeshCore. A growing network of repeaters relays messages with no cell towers, Wi-Fi, or internet. Learn what MeshCore is and how to join."
     />
     <meta name="twitter:card" content="summary" />
 
@@ -200,8 +200,8 @@
         width: 7px;
         height: 7px;
         border-radius: 50%;
-        background: var(--warn);
-        box-shadow: 0 0 0 3px rgba(210, 153, 34, 0.18);
+        background: var(--accent);
+        box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.18);
       }
 
       /* ===================================================================
@@ -882,7 +882,7 @@
       }
 
       /* ===================================================================
-         Footer — centered antenna mark + standby micro-caption
+         Footer — centered antenna mark + on-air micro-caption
          =================================================================== */
       footer {
         padding: 36px 0 56px;
@@ -904,7 +904,7 @@
         font-size: 0.72rem;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--warn);
+        color: var(--accent);
         margin-bottom: 10px;
       }
       footer a {
@@ -998,9 +998,25 @@
           padding-top: 4px;
         }
 
-        /* Repeater cards stack to a single column on phones */
-        .repeater-grid {
+        /* Repeater cards are already one-per-line; on phones, tighten them and
+           stack each detail row (label over value) so long values — location
+           and the 64-char public key — get the card's full width instead of
+           sharing it with the label column. */
+        .repeater {
+          padding: 18px 16px;
+        }
+        .repeater-dl {
           grid-template-columns: 1fr;
+          gap: 0;
+        }
+        .repeater-dl dt {
+          padding-top: 12px;
+        }
+        .repeater-dl dt:first-of-type {
+          padding-top: 0;
+        }
+        .repeater-dl dd {
+          padding-top: 2px;
         }
 
         /* Slightly tighter step rows; keep the knob + signal path aligned */
@@ -1063,8 +1079,7 @@
 
         /* amber STANDBY dot slow pulse */
         .badge.pending .dot,
-        .status.pending .dot,
-        .statusbar .si .live {
+        .status.pending .dot {
           animation: standby 2s ease-in-out infinite;
         }
         @keyframes standby {
@@ -1076,6 +1091,20 @@
           50% {
             opacity: 0.45;
             box-shadow: 0 0 0 5px rgba(210, 153, 34, 0.05);
+          }
+        }
+
+        /* green LIVE network dot — steady green glow, gentle breathing ring */
+        .statusbar .si .live {
+          animation: livepulse 2.4s ease-in-out infinite;
+        }
+        @keyframes livepulse {
+          0%,
+          100% {
+            box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.2);
+          }
+          50% {
+            box-shadow: 0 0 0 5px rgba(63, 185, 80, 0.06);
           }
         }
 
@@ -1140,16 +1169,13 @@
         border: 0;
       }
 
-      /* Repeater cards: at most two per row so each stays wide enough for the
-         detail list (public keys are long). A lone trailing card spans the
-         full row instead of leaving a gap; collapses to one column on phones. */
+      /* One repeater per line: a single full-width column at every width, so
+         each card has room for its detail list (public keys are long) and the
+         list reads top-to-bottom on a phone with no side-by-side cramping. */
       .repeater-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
         gap: 16px;
-      }
-      .repeater-grid > .repeater:last-child:nth-child(odd) {
-        grid-column: 1 / -1;
       }
 
       /* Repeater cards reuse .card; this adds the per-node detail list */
@@ -1231,8 +1257,7 @@
             Massachusetts, built on
             <a href="https://meshcore.io" rel="noopener">MeshCore</a>. A growing
             network of repeaters relays messages with no cell towers, Wi-Fi, or
-            internet — the latest,
-            <strong>BUR&nbsp;-&nbsp;Chestnut</strong>, is coming online now.
+            internet.
           </p>
 
           <!-- Oscilloscope sweep divider: live signal trace from antenna -->
@@ -1283,8 +1308,13 @@
         <p class="sub">
           Repeater nodes across Burlington, MA ·
           <b data-repeater-count>—</b> total. Add one in
-          <span class="mono">data/repeaters.json</span> and it appears here
-          automatically.
+          <a
+            class="mono"
+            href="https://github.com/burmesh/burme.sh/blob/main/data/repeaters.json"
+            rel="noopener"
+            >data/repeaters.json</a
+          >
+          and it appears here automatically.
         </p>
 
         <!-- The Worker fills this container (on-air first, newest-first). It is
@@ -1601,7 +1631,7 @@
             <path d="M6 5a8 8 0 0 0 0 12M18 5a8 8 0 0 1 0 12" />
           </g>
         </svg>
-        <span class="onair">Standby · Off Air</span>
+        <span class="onair">Live · On Air</span>
         <p>
           <strong>burme.sh</strong> — the Burlington Mesh, an off-grid LoRa
           network for Burlington, MA.<br />

@@ -2,8 +2,8 @@
 
 The public landing page for the **Burlington Mesh** at [burme.sh](https://burme.sh) —
 a community off-grid [MeshCore](https://meshcore.io) LoRa mesh for Burlington, MA. It
-explains what MeshCore is, lists the network's repeaters (the latest being
-**BUR - Chestnut**), and shows how to join the mesh.
+explains what MeshCore is, lists the network's repeaters, and shows how to join
+the mesh.
 
 The page itself is a single, self-contained static HTML file (inline CSS, no
 client-side JavaScript). It's served from a **Cloudflare Worker** that renders
