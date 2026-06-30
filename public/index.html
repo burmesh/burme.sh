@@ -164,9 +164,6 @@
          (STATION / BAND / MODE / PWR). Slim band above the hero.
          =================================================================== */
       .statusbar {
-        position: sticky;
-        top: 0;
-        z-index: 20;
         background: rgba(10, 14, 20, 0.92);
         border-bottom: 1px solid var(--border);
         backdrop-filter: blur(6px);
@@ -205,32 +202,60 @@
       }
 
       /* ===================================================================
-         Hero — station console with concentric broadcast waves.
-         Ring stagger encodes the real Advert timing (zero-hop / flood).
+         Hero — full-bleed station band with concentric broadcast waves
+         radiating from behind the brand mark. The band spans the full viewport
+         width (distinct from the 880px body column); a top glow, a masked
+         signal grid, and a faint scanline supply the atmosphere. Ring stagger
+         encodes the real Advert timing (zero-hop / flood).
          =================================================================== */
       header {
-        padding: 60px 0 0;
-        text-align: center;
-      }
-
-      .console {
         position: relative;
-        isolation: isolate;
-        overflow: hidden; /* contain expanding rings, prevent x-scroll */
-        border: 1px solid var(--border);
-        border-radius: 20px;
+        isolation: isolate; /* contain the z-index:-1 background layers */
+        overflow: hidden; /* clip expanding rings / grid at the band edges */
+        text-align: center;
+        padding: 56px 0 48px;
+        border-bottom: 1px solid var(--border);
         background:
           radial-gradient(
-            circle at 50% 38%,
-            rgba(63, 185, 80, 0.16),
+            1100px 520px at 50% -6%,
+            rgba(63, 185, 80, 0.2),
             transparent 60%
           ),
           var(--bg-soft);
-        padding: 44px 20px 40px;
+      }
+
+      /* Signal grid — densest behind the mark, faded toward the band edges */
+      header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background:
+          repeating-linear-gradient(
+            0deg,
+            rgba(63, 185, 80, 0.05) 0 1px,
+            transparent 1px 42px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(63, 185, 80, 0.05) 0 1px,
+            transparent 1px 42px
+          );
+        -webkit-mask-image: radial-gradient(
+          680px 360px at 50% 32%,
+          black,
+          transparent 72%
+        );
+        mask-image: radial-gradient(
+          680px 360px at 50% 32%,
+          black,
+          transparent 72%
+        );
       }
 
       /* Ultra-subtle CRT scanline veneer — sits behind content only */
-      .console::after {
+      header::after {
         content: "";
         position: absolute;
         inset: 0;
@@ -238,17 +263,16 @@
         pointer-events: none;
         background: repeating-linear-gradient(
           rgba(0, 0, 0, 0) 0 2px,
-          rgba(0, 0, 0, 0.06) 2px 3px
+          rgba(0, 0, 0, 0.05) 2px 3px
         );
-        opacity: 0.6;
+        opacity: 0.55;
       }
 
-      /* Antenna + radiating waves stage */
+      /* Brand mark + radiating waves stage (waves emanate from the logo centre) */
       .antenna-stage {
         position: relative;
-        width: 168px;
-        height: 168px;
-        margin: 0 auto 6px;
+        width: min(216px, 58%);
+        margin: 16px auto 16px;
         display: grid;
         place-items: center;
       }
@@ -257,21 +281,14 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 160px;
-        height: 160px;
-        margin: -80px 0 0 -80px;
+        width: 300px;
+        height: 300px;
+        margin: -150px 0 0 -150px;
         border: 2px solid var(--accent);
         border-radius: 50%;
         opacity: 0; /* reduced-motion override shows a static ring */
-        transform: scale(0.2);
+        transform: scale(0.24);
         pointer-events: none;
-      }
-
-      .antenna-svg {
-        position: relative;
-        width: 76px;
-        height: 76px;
-        filter: drop-shadow(0 0 6px rgba(63, 185, 80, 0.5));
       }
 
       .badge {
@@ -352,15 +369,58 @@
       }
 
       section {
-        padding: 44px 0;
-        border-bottom: 1px solid var(--border);
+        position: relative; /* anchors the full-bleed alternating band */
+        padding: 58px 0;
       }
-      section:last-of-type {
-        border-bottom: none;
+
+      /* Make adjacent sections read as distinct surfaces: every other section
+         sits on a subtly raised, edge-to-edge band that runs wider than the
+         880px content column. The band's own top/bottom hairlines double as the
+         section dividers, so every boundary is marked exactly once. The tint is
+         kept faint and the cards/panels stay opaque, so they still pop on top. */
+      main > section:nth-of-type(even)::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 100vw;
+        margin-left: -50vw; /* centre a viewport-wide band on the column */
+        z-index: -1;
+        background: rgba(255, 255, 255, 0.022);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        pointer-events: none;
+      }
+
+      /* Section kicker: a mono "// 0n · label" header above the heading. It
+         reuses the console motif (see .panel-cap, .advisory-tag) and, with its
+         trailing signal rule, acts as a strong "new section starts here" marker. */
+      .section-kicker {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin: 0 0 16px;
+      }
+      /* trailing signal rule that runs out toward the section's right edge */
+      .section-kicker::after {
+        content: "";
+        flex: 1 1 auto;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(63, 185, 80, 0.45),
+          transparent
+        );
       }
 
       h2 {
-        font-size: 1.5rem;
+        font-size: 1.7rem;
         margin: 0 0 6px;
         letter-spacing: -0.01em;
       }
@@ -956,15 +1016,16 @@
 
         /* Tighten the vertical rhythm so there's less scrolling */
         header {
-          padding: 36px 0 0;
-        }
-        .console {
-          padding: 32px 16px 30px;
-          border-radius: 16px;
+          padding: 40px 0 36px;
         }
         .antenna-stage {
-          width: 140px;
-          height: 140px;
+          width: min(176px, 56%);
+        }
+        /* Smaller rings so they don't overflow a narrow phone */
+        .wave {
+          width: 240px;
+          height: 240px;
+          margin: -120px 0 0 -120px;
         }
         header h1 {
           font-size: clamp(1.85rem, 8vw, 2.4rem);
@@ -1132,8 +1193,9 @@
           scroll-behavior: auto !important;
         }
         .wave {
-          opacity: 0.18;
-          transform: scale(0.62);
+          opacity: 0.22;
+          /* large enough to ring AROUND the logo, not hide behind it */
+          transform: scale(0.92);
         }
         .wave.w1,
         .wave.w3,
@@ -1149,11 +1211,12 @@
          Brand logo + data-driven repeater cards
          =================================================================== */
       .hero-logo {
+        position: relative;
+        z-index: 1; /* sits above the radiating waves */
         display: block;
-        width: min(300px, 78%);
+        width: 100%; /* fills the .antenna-stage, which sets the size */
         height: auto;
-        margin: 0 auto 10px;
-        filter: drop-shadow(0 0 18px rgba(63, 185, 80, 0.18));
+        filter: drop-shadow(0 0 22px rgba(63, 185, 80, 0.22));
       }
 
       /* Visually-hidden but available to assistive tech / document outline */
@@ -1219,24 +1282,144 @@
         background: var(--text-dim);
         box-shadow: 0 0 0 3px rgba(154, 167, 180, 0.15);
       }
+
+      /* ===================================================================
+         Club-page chrome — sticky section nav + hero call-to-action.
+         As a club page, the priority destinations (Repeaters, Join) must be
+         reachable from anywhere; the hero leads with an explicit Join CTA.
+         =================================================================== */
+
+      /* The sticky top bar wraps the network readouts AND the section nav so
+         they travel together; .statusbar itself is no longer independently
+         sticky (positioning moved here). */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 21;
+      }
+
+      .sectionnav {
+        background: rgba(10, 14, 20, 0.92);
+        backdrop-filter: blur(6px);
+        border-bottom: 1px solid var(--border);
+      }
+      .sectionnav .wrap {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        /* stay one tidy line; scroll horizontally on narrow phones */
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .sectionnav .wrap::-webkit-scrollbar {
+        display: none;
+      }
+      .sectionnav a {
+        flex: 0 0 auto;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        white-space: nowrap;
+      }
+      .sectionnav a:hover {
+        text-decoration: none;
+        color: var(--accent);
+        background: rgba(63, 185, 80, 0.08);
+      }
+
+      /* Anchored sections clear the sticky bar when jumped to via the nav */
+      section[id] {
+        scroll-margin-top: 92px;
+      }
+
+      /* Hero call-to-action: primary "Join" + ghost "View repeaters" */
+      .hero-cta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 22px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 22px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: 1px solid transparent;
+        transition:
+          transform 0.15s ease,
+          border-color 0.15s ease,
+          background 0.15s ease;
+      }
+      .btn:hover {
+        text-decoration: none;
+        transform: translateY(-2px);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #06210d;
+        box-shadow: 0 0 18px rgba(63, 185, 80, 0.28);
+      }
+      .btn-primary:hover {
+        background: var(--accent-bright);
+      }
+      .btn-ghost {
+        color: var(--text);
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent-dim);
+        color: var(--accent);
+      }
     </style>
   </head>
 
   <body>
-    <!-- Sticky live-status strip: at-a-glance network cue -->
-    <div class="statusbar" aria-label="Network status">
-      <div class="wrap">
-        <span class="si"><span class="live" aria-hidden="true"></span><span class="k">NETWORK</span>&nbsp;<b>BURLINGTON</b></span>
-        <span class="si"><span class="k">REPEATERS</span>&nbsp;<b data-repeater-count>—</b></span>
-        <span class="si"><span class="k">BAND</span>&nbsp;<b>910.525&nbsp;MHz</b></span>
-        <span class="si"><span class="k">MODE</span>&nbsp;<b>LoRa&nbsp;Mesh</b></span>
-        <span class="si"><span class="k">PRESET</span>&nbsp;<b>USA&nbsp;/&nbsp;Canada</b></span>
+    <!-- Sticky top bar: live network readouts + section navigation -->
+    <div class="topbar">
+      <div class="statusbar">
+        <div class="wrap" role="group" aria-label="Network status">
+          <span class="si"><span class="live" aria-hidden="true"></span><span class="k">NETWORK</span>&nbsp;<b>BURLINGTON</b></span>
+          <span class="si"><span class="k">REPEATERS</span>&nbsp;<b data-repeater-count>—</b></span>
+          <span class="si"><span class="k">BAND</span>&nbsp;<b>910.525&nbsp;MHz</b></span>
+          <span class="si"><span class="k">MODE</span>&nbsp;<b>LoRa&nbsp;Mesh</b></span>
+          <span class="si"><span class="k">PRESET</span>&nbsp;<b>USA&nbsp;/&nbsp;Canada</b></span>
+        </div>
       </div>
+      <nav class="sectionnav" aria-label="Page sections">
+        <div class="wrap">
+          <a href="#repeaters">Repeaters</a>
+          <a href="#join">Join</a>
+          <a href="#about">About</a>
+          <a href="#resources">Resources</a>
+        </div>
+      </nav>
     </div>
 
     <header>
       <div class="wrap">
-        <div class="console">
+        <!-- Status eyebrow above the brand mark -->
+        <span class="badge"
+          ><span class="dot" aria-hidden="true"></span> Burlington, MA ·
+          MeshCore mesh</span
+        >
+
+        <!-- Brand mark with broadcast rings radiating from behind the logo -->
+        <div class="antenna-stage">
+          <span class="wave w1" aria-hidden="true"></span>
+          <span class="wave w2" aria-hidden="true"></span>
+          <span class="wave w3" aria-hidden="true"></span>
+          <span class="wave w4" aria-hidden="true"></span>
           <!-- Brand logo (served from ./public/burlington-mesh-logo.svg) -->
           <img
             class="hero-logo"
@@ -1245,65 +1428,43 @@
             width="300"
             height="300"
           />
-
-          <span class="badge"
-            ><span class="dot" aria-hidden="true"></span> Burlington, MA ·
-            MeshCore mesh</span
-          >
-          <h1 class="sr-only">Burlington Mesh</h1>
-          <div class="domain">burme.sh</div>
-          <p class="lede">
-            A community off-grid <strong>LoRa</strong> mesh across Burlington,
-            Massachusetts, built on
-            <a href="https://meshcore.io" rel="noopener">MeshCore</a>. A growing
-            network of repeaters relays messages with no cell towers, Wi-Fi, or
-            internet.
-          </p>
-
-          <!-- Oscilloscope sweep divider: live signal trace from antenna -->
-          <svg
-            class="scope"
-            viewBox="0 0 1200 40"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path
-              class="trace"
-              d="M0 20 H360 q15 0 22 -16 q7 16 22 16 q15 0 22 -28 q7 28 22 28 q15 0 22 -10 q7 10 22 10 q15 0 22 -5 q7 5 22 5 H1200"
-            />
-          </svg>
         </div>
+
+        <h1 class="sr-only">Burlington Mesh</h1>
+        <div class="domain">burme.sh</div>
+        <p class="lede">
+          A community off-grid <strong>LoRa</strong> mesh across Burlington,
+          Massachusetts, built on
+          <a href="https://meshcore.io" rel="noopener">MeshCore</a>. A growing
+          network of repeaters relays messages with no cell towers, Wi-Fi, or
+          internet.
+        </p>
+
+        <!-- Primary actions: join the club / jump to the repeater list -->
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#join">Join the mesh</a>
+          <a class="btn btn-ghost" href="#repeaters">View the repeaters</a>
+        </div>
+
+        <!-- Oscilloscope sweep divider: live signal trace from antenna -->
+        <svg
+          class="scope"
+          viewBox="0 0 1200 40"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            class="trace"
+            d="M0 20 H360 q15 0 22 -16 q7 16 22 16 q15 0 22 -28 q7 28 22 28 q15 0 22 -10 q7 10 22 10 q15 0 22 -5 q7 5 22 5 H1200"
+          />
+        </svg>
       </div>
     </header>
 
     <main class="wrap">
-      <!-- What is MeshCore -->
-      <section id="about">
-        <h2>What is MeshCore?</h2>
-        <p class="sub">
-          Off-grid messaging that needs no cell towers, Wi-Fi, or internet.
-        </p>
-        <p>
-          <a href="https://meshcore.io" rel="noopener">MeshCore</a> is an
-          open-source firmware and app ecosystem for long-range, low-power
-          communication over <abbr title="Long Range radio">LoRa</abbr>. Small,
-          inexpensive radios relay text messages for one another, forming a
-          self-healing mesh that keeps working when conventional infrastructure
-          is unavailable — useful for emergencies, events, hiking, and community
-          resilience.
-        </p>
-        <p>
-          Unlike a simple flood network, MeshCore uses lightweight managed
-          routing: nodes learn paths through the mesh, so messages take
-          efficient hops instead of being rebroadcast by everyone.
-          <strong>Repeaters</strong> like this one are the backbone — placed
-          high and powered around the clock, they carry traffic over distances a
-          handheld node could never reach alone.
-        </p>
-      </section>
-
       <!-- Repeaters — rendered by the Worker from data/repeaters.json -->
       <section id="repeaters">
+        <span class="section-kicker">// 01 · The network</span>
         <h2>Repeaters</h2>
         <p class="sub">
           Repeater nodes across Burlington, MA ·
@@ -1408,6 +1569,7 @@
 
       <!-- How to join -->
       <section id="join">
+        <span class="section-kicker">// 02 · Get on the air</span>
         <h2>Join the mesh</h2>
         <p class="sub">From zero to on-air in four steps.</p>
         <ol class="steps">
@@ -1451,8 +1613,36 @@
         </ol>
       </section>
 
+      <!-- What is MeshCore — supporting context, placed below the repeaters
+           and the join flow that this club page leads with -->
+      <section id="about">
+        <span class="section-kicker">// 03 · Background</span>
+        <h2>What is MeshCore?</h2>
+        <p class="sub">
+          Off-grid messaging that needs no cell towers, Wi-Fi, or internet.
+        </p>
+        <p>
+          <a href="https://meshcore.io" rel="noopener">MeshCore</a> is an
+          open-source firmware and app ecosystem for long-range, low-power
+          communication over <abbr title="Long Range radio">LoRa</abbr>. Small,
+          inexpensive radios relay text messages for one another, forming a
+          self-healing mesh that keeps working when conventional infrastructure
+          is unavailable — useful for emergencies, events, hiking, and community
+          resilience.
+        </p>
+        <p>
+          Unlike a simple flood network, MeshCore uses lightweight managed
+          routing: nodes learn paths through the mesh, so messages take
+          efficient hops instead of being rebroadcast by everyone.
+          <strong>Repeaters</strong> like this one are the backbone — placed
+          high and powered around the clock, they carry traffic over distances a
+          handheld node could never reach alone.
+        </p>
+      </section>
+
       <!-- Node roles -->
       <section id="roles">
+        <span class="section-kicker">// 04 · Reference</span>
         <h2>MeshCore node roles</h2>
         <p class="sub">The building blocks of a MeshCore network.</p>
         <div class="grid">
@@ -1527,6 +1717,7 @@
 
       <!-- Resources -->
       <section id="resources">
+        <span class="section-kicker">// 05 · Build &amp; explore</span>
         <h2>Resources</h2>
         <p class="sub">Everything you need to build, flash, and explore.</p>
         <div class="links">
@@ -1589,19 +1780,6 @@
             <span class="t">r/MeshCore →</span>
             <span class="d">Community discussion and help</span>
             <span class="host">reddit.com/r/meshcore</span>
-          </a>
-          <a class="link" href="https://www.seeedstudio.com" rel="noopener">
-            <svg class="bars" viewBox="0 0 18 16" aria-hidden="true">
-              <g fill="currentColor">
-                <rect x="0" y="11" width="3" height="5" />
-                <rect x="5" y="7" width="3" height="9" />
-                <rect x="10" y="3" width="3" height="13" />
-                <rect x="15" y="0" width="3" height="16" />
-              </g>
-            </svg>
-            <span class="t">SenseCAP hardware →</span>
-            <span class="d">Seeed Studio solar LoRa nodes</span>
-            <span class="host">seeedstudio.com</span>
           </a>
           <a class="link" href="https://bostonme.sh" rel="noopener">
             <svg class="bars" viewBox="0 0 18 16" aria-hidden="true">
