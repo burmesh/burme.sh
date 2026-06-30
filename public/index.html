@@ -1059,14 +1059,17 @@
           padding-top: 4px;
         }
 
-        /* Repeater cards are already one-per-line; on phones, tighten them and
-           stack each detail row (label over value) so long values — location
-           and the 64-char public key — get the card's full width instead of
-           sharing it with the label column. */
-        .repeater {
-          padding: 18px 16px;
+        /* Datasheet cards on phones: tighten each region's padding and stack
+           every detail row (label over value) so long values — location and the
+           64-char public key — get the card's full width. */
+        .repeater-head {
+          padding: 10px 15px;
+        }
+        .repeater .repeater-name {
+          padding: 14px 15px 2px;
         }
         .repeater-dl {
+          padding: 8px 15px 16px;
           grid-template-columns: 1fr;
           gap: 0;
         }
@@ -1078,6 +1081,9 @@
         }
         .repeater-dl dd {
           padding-top: 2px;
+        }
+        .repeater-action {
+          padding: 0 15px 16px;
         }
 
         /* Slightly tighter step rows; keep the knob + signal path aligned */
@@ -1241,26 +1247,53 @@
         gap: 16px;
       }
 
-      /* Repeater cards reuse .card; this adds the per-node detail list */
-      .repeater .repeater-status {
-        margin: 2px 0 12px;
+      /* Node datasheet card — reuses .card for the frame/hover, but pads each
+         region itself so the status header strip (and the add-action bar) run
+         edge-to-edge inside the rounded corners. */
+      .repeater {
+        padding: 0;
+        overflow: hidden; /* clip the head strip to the card's rounded corners */
+      }
+      .repeater-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 11px 18px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(63, 185, 80, 0.04);
+      }
+      .repeater-flag {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .repeater-head .role-tag {
+        margin: 0; /* role-tag carries a bottom margin in the roles grid */
+      }
+      .repeater .repeater-name {
+        margin: 0;
+        padding: 15px 18px 2px;
+        font-size: 1.2rem;
       }
       .repeater-dl {
         margin: 0;
+        padding: 10px 18px 18px;
         display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 6px 14px;
-        font-size: 0.9rem;
+        grid-template-columns: 128px 1fr;
+        gap: 9px 16px;
+        font-size: 0.92rem;
       }
       .repeater-dl dt {
         margin: 0;
         color: var(--text-dim);
         font-weight: 600;
-        font-size: 0.74rem;
+        font-size: 0.72rem;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
         align-self: start;
-        padding-top: 1px;
+        padding-top: 2px;
       }
       .repeater-dl dd {
         margin: 0;
@@ -1270,6 +1303,17 @@
         overflow-wrap: anywhere;
         font-size: 0.8rem;
         color: var(--text-dim);
+      }
+      .repeater-action {
+        padding: 0 18px 18px;
+        margin-top: -6px; /* pull the compact button nearer the details */
+      }
+      /* Compact "Add to MeshCore" action — sized to its label, not full-width,
+         so it reads as a neat pill rather than a heavy full-bleed bar. */
+      .repeater-action .btn-add {
+        padding: 7px 15px;
+        font-size: 0.82rem;
+        gap: 6px;
       }
 
       /* OFFLINE status — dim, redundant with text/shape (never color alone) */

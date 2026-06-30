@@ -50,39 +50,77 @@ function esc(value) {
   );
 }
 
+/** Treat empty or placeholder values ("TBD", "N/A", "—", …) as absent, so they
+ *  are skipped instead of rendering as literal noise on a card. */
+function isBlank(value) {
+  if (value == null) return true;
+  const s = String(value).trim();
+  return s === "" || /^(tbd|n\/?a|none|null|unknown|[-–—])$/i.test(s);
+}
+
+/** meshcore:// deep link that adds a node/contact to the user's MeshCore app.
+ *  `type` is the MeshCore contact type: 1 = companion/admin, 2 = repeater. */
+function addContactHref(name, publicKey, type) {
+  return (
+    `meshcore://contact/add?name=${encodeURIComponent(name)}` +
+    `&public_key=${publicKey}&type=${type}`
+  );
+}
+
 /** Resolve a repeater's admin id and render it (linked to a MeshCore contact
- *  when the admin has a public key). Unknown ids fall back to the raw value. */
+ *  when the admin has a public key). Unknown ids fall back to the raw value;
+ *  blank/placeholder admins are omitted entirely. */
 function adminCell(adminId) {
-  if (!adminId) return "";
+  if (isBlank(adminId)) return "";
   const admin = admins[adminId] || { name: adminId };
-  const inner = admin.publicKey
-    ? `<a href="${esc(
-        `meshcore://contact/add?name=${encodeURIComponent(admin.name)}` +
-          `&public_key=${admin.publicKey}&type=1`,
-      )}">${esc(admin.name)}</a>`
+  if (isBlank(admin.name)) return "";
+  const inner = !isBlank(admin.publicKey)
+    ? `<a href="${esc(addContactHref(admin.name, admin.publicKey, 1))}">${esc(
+        admin.name,
+      )}</a>`
     : esc(admin.name);
   return `<dt>Admin</dt><dd class="tech">${inner}</dd>`;
 }
 
-/** Render one repeater as a console card matching the page's design system. */
+/** Render one repeater as a "node datasheet" card: a status header strip, the
+ *  node name, a tidy detail grid (blank fields omitted), and a one-tap
+ *  "Add to MeshCore" action for on-air nodes that already have a public key. */
 function repeaterCard(r) {
   const s = STATUS[r.status] || STATUS.offline;
+  const hasKey = !isBlank(r.publicKey);
+  const onAir = r.status === "on-air";
+
   const rows = [];
-  if (r.location) rows.push(`<dt>Location</dt><dd>${esc(r.location)}</dd>`);
-  if (r.hardware) rows.push(`<dt>Hardware</dt><dd>${esc(r.hardware)}</dd>`);
-  if (r.admin) rows.push(adminCell(r.admin));
+  if (!isBlank(r.location))
+    rows.push(`<dt>Location</dt><dd>${esc(r.location)}</dd>`);
+  if (!isBlank(r.hardware))
+    rows.push(`<dt>Hardware</dt><dd>${esc(r.hardware)}</dd>`);
+  rows.push(adminCell(r.admin));
   rows.push(
     `<dt>Public key</dt>` +
-      (r.publicKey
+      (hasKey
         ? `<dd class="key tech">${esc(r.publicKey)}</dd>`
         : `<dd class="key"><span class="key-pending">Assigned when the node goes on the air</span></dd>`),
   );
+
+  // The add-contact deep link works with no client-side JS (just an href), so
+  // it fits the page's strict script-src 'none' CSP. type=2 = repeater.
+  const action =
+    onAir && hasKey
+      ? `<div class="repeater-action"><a class="btn btn-primary btn-add" href="${esc(
+          addContactHref(r.name, r.publicKey, 2),
+        )}">+ Add to MeshCore</a></div>`
+      : "";
+
   return (
     `<article class="card repeater" data-status="${esc(r.status)}">` +
+    `<div class="repeater-head">` +
+    `<span class="${s.cls} repeater-flag"><span class="dot" aria-hidden="true"></span> ${esc(s.label)}</span>` +
     `<span class="role-tag">${esc(r.role || "Repeater")}</span>` +
-    `<h3>${esc(r.name)}</h3>` +
-    `<p class="repeater-status"><span class="${s.cls}"><span class="dot" aria-hidden="true"></span> ${esc(s.label)}</span></p>` +
+    `</div>` +
+    `<h3 class="repeater-name">${esc(r.name)}</h3>` +
     `<dl class="repeater-dl">${rows.join("")}</dl>` +
+    action +
     `</article>`
   );
 }
