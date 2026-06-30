@@ -97,10 +97,10 @@ function repeaterCard(r) {
     rows.push(`<dt>Hardware</dt><dd>${esc(r.hardware)}</dd>`);
   rows.push(adminCell(r.admin));
   rows.push(
-    `<dt>Public key</dt>` +
+    `<dt>Key</dt>` +
       (hasKey
         ? `<dd class="key tech">${esc(r.publicKey)}</dd>`
-        : `<dd class="key"><span class="key-pending">Assigned when the node goes on the air</span></dd>`),
+        : `<dd class="key"><span class="key-pending">Assigned once on the air</span></dd>`),
   );
 
   // The add-contact deep link works with no client-side JS (just an href), so
@@ -112,13 +112,20 @@ function repeaterCard(r) {
         )}">+ Add to MeshCore</a></div>`
       : "";
 
+  // Show the role only when it isn't the default "Repeater" — every node in the
+  // Repeaters section is one, so the tag would just be noise otherwise.
+  const roleTag =
+    r.role && r.role.trim().toLowerCase() !== "repeater"
+      ? `<span class="repeater-role">${esc(r.role)}</span>`
+      : "";
+
   return (
     `<article class="card repeater" data-status="${esc(r.status)}">` +
     `<div class="repeater-head">` +
-    `<span class="${s.cls} repeater-flag"><span class="dot" aria-hidden="true"></span> ${esc(s.label)}</span>` +
-    `<span class="role-tag">${esc(r.role || "Repeater")}</span>` +
-    `</div>` +
     `<h3 class="repeater-name">${esc(r.name)}</h3>` +
+    roleTag +
+    `<span class="${s.cls} repeater-flag"><span class="dot" aria-hidden="true"></span> ${esc(s.label)}</span>` +
+    `</div>` +
     `<dl class="repeater-dl">${rows.join("")}</dl>` +
     action +
     `</article>`

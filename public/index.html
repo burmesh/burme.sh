@@ -1063,18 +1063,18 @@
            every detail row (label over value) so long values — location and the
            64-char public key — get the card's full width. */
         .repeater-head {
-          padding: 10px 15px;
+          padding: 9px 13px;
         }
         .repeater .repeater-name {
-          padding: 14px 15px 2px;
+          font-size: 0.98rem;
         }
         .repeater-dl {
-          padding: 8px 15px 16px;
+          padding: 8px 13px 12px;
           grid-template-columns: 1fr;
           gap: 0;
         }
         .repeater-dl dt {
-          padding-top: 12px;
+          padding-top: 10px;
         }
         .repeater-dl dt:first-of-type {
           padding-top: 0;
@@ -1083,7 +1083,7 @@
           padding-top: 2px;
         }
         .repeater-action {
-          padding: 0 15px 16px;
+          padding: 0 13px 12px;
         }
 
         /* Slightly tighter step rows; keep the knob + signal path aligned */
@@ -1254,42 +1254,57 @@
         padding: 0;
         overflow: hidden; /* clip the head strip to the card's rounded corners */
       }
+      /* Header bar: node name + status flag share one line to keep it compact */
       .repeater-head {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 11px 18px;
+        gap: 10px;
+        padding: 9px 14px;
         border-bottom: 1px solid var(--border);
         background: rgba(63, 185, 80, 0.04);
       }
-      .repeater-flag {
-        font-family: var(--mono);
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-      .repeater-head .role-tag {
-        margin: 0; /* role-tag carries a bottom margin in the roles grid */
-      }
       .repeater .repeater-name {
+        flex: 1 1 auto;
+        min-width: 0; /* let a long name ellipsize instead of shoving the flag */
         margin: 0;
-        padding: 15px 18px 2px;
-        font-size: 1.2rem;
+        padding: 0;
+        font-size: 1.02rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .repeater-role {
+        flex: 0 0 auto;
+        font-family: var(--mono);
+        font-size: 0.62rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 1px 7px;
+      }
+      .repeater-flag {
+        flex: 0 0 auto;
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
       }
       .repeater-dl {
         margin: 0;
-        padding: 10px 18px 18px;
+        padding: 9px 14px 12px;
         display: grid;
-        grid-template-columns: 128px 1fr;
-        gap: 9px 16px;
-        font-size: 0.92rem;
+        grid-template-columns: 84px 1fr;
+        gap: 5px 12px;
+        font-size: 0.86rem;
       }
       .repeater-dl dt {
         margin: 0;
         color: var(--text-dim);
         font-weight: 600;
-        font-size: 0.72rem;
+        font-size: 0.68rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         align-self: start;
@@ -1301,18 +1316,17 @@
       }
       .repeater-dl dd.key {
         overflow-wrap: anywhere;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--text-dim);
       }
       .repeater-action {
-        padding: 0 18px 18px;
-        margin-top: -6px; /* pull the compact button nearer the details */
+        padding: 0 14px 12px;
+        margin-top: -2px;
       }
-      /* Compact "Add to MeshCore" action — sized to its label, not full-width,
-         so it reads as a neat pill rather than a heavy full-bleed bar. */
+      /* Compact "Add to MeshCore" action — sized to its label, not full-width */
       .repeater-action .btn-add {
-        padding: 7px 15px;
-        font-size: 0.82rem;
+        padding: 6px 13px;
+        font-size: 0.8rem;
         gap: 6px;
       }
 
