@@ -836,6 +836,84 @@
         }
       }
 
+      /* New England network map — declarative inline SVG (no JS, so it keeps
+         the strict script-src 'none' CSP). Lit states are <a> links to their
+         statewide MeshCore network and set their own --c accent inline; VT and
+         RI are dashed-out "no net yet". */
+      .ne-map {
+        margin: 6px 0 22px;
+      }
+      .ne-map-svg {
+        display: block;
+        width: 100%;
+        max-width: 430px;
+        height: auto;
+        margin: 0 auto;
+        overflow: visible;
+      }
+      .ne-map figcaption {
+        max-width: 430px;
+        margin: 12px auto 0;
+        text-align: center;
+        font-size: 0.82rem;
+        color: var(--text-dim);
+      }
+      .ne-state {
+        fill: color-mix(in srgb, var(--c, var(--border)) 20%, transparent);
+        stroke: var(--c, var(--border));
+        stroke-width: 1.4;
+        stroke-linejoin: round;
+        transition:
+          fill 0.15s ease,
+          filter 0.15s ease;
+      }
+      .ne-label {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 13px;
+        fill: var(--c, var(--text-dim));
+        text-anchor: middle;
+        pointer-events: none;
+      }
+      .ne-sub {
+        font-family: var(--mono);
+        font-size: 8.5px;
+        fill: var(--c, var(--text-dim));
+        opacity: 0.9;
+        text-anchor: middle;
+        pointer-events: none;
+      }
+      .ne-hub {
+        fill: var(--c);
+      }
+      .ne-ping {
+        fill: none;
+        stroke: var(--c);
+        stroke-width: 1.4;
+        opacity: 0.5;
+      }
+      .ne-inactive .ne-state {
+        fill: #161d2966;
+        stroke: #3a4552;
+        stroke-dasharray: 3 3;
+      }
+      .ne-inactive .ne-label {
+        fill: var(--text-dim);
+      }
+      .ne-link {
+        cursor: pointer;
+      }
+      .ne-link:hover .ne-state,
+      .ne-link:focus-visible .ne-state {
+        fill: color-mix(in srgb, var(--c) 42%, transparent);
+        filter: drop-shadow(
+          0 0 6px color-mix(in srgb, var(--c) 55%, transparent)
+        );
+      }
+      .ne-link:focus-visible {
+        outline: none;
+      }
+
       /* ===================================================================
          Transmission advisory (was .note) — amber-railed callout
          =================================================================== */
@@ -1898,6 +1976,118 @@
              Boston (Massachusetts) mesh; NH and CT are the neighbouring-state
              networks. Each gets an accent-coded hex-node beacon + state chip. -->
         <h3 class="region-title">// Statewide &amp; neighboring networks</h3>
+
+        <!-- New England map: an abstract-but-relatively-accurate SVG projected
+             from lon/lat boundary points. Lit states link to their statewide
+             MeshCore network; VT and RI have no statewide net yet. Pure markup
+             (SVG <a> links), so no JS and no CSP change. -->
+        <figure class="ne-map">
+          <svg
+            class="ne-map-svg"
+            viewBox="0 0 406 531"
+            role="img"
+            aria-labelledby="ne-map-title ne-map-desc"
+          >
+            <title id="ne-map-title">MeshCore networks across New England</title>
+            <desc id="ne-map-desc">
+              Map of the six New England states. Massachusetts, New Hampshire,
+              Connecticut, and Maine are highlighted and link to their statewide
+              MeshCore networks; Vermont and Rhode Island have no statewide
+              network yet.
+            </desc>
+
+            <!-- Inactive states (drawn behind the lit, linked ones) -->
+            <g class="ne-inactive">
+              <path
+                class="ne-state"
+                d="M35.5 382.2 C35.5 382.2 81.9 382.2 81.9 382.2 C81.9 382.2 85.3 337.7 85.3 337.7 C85.3 337.7 102.3 267.5 102.3 267.5 C102.3 267.5 136.2 204.3 136.2 204.3 C136.2 204.3 31.5 204.3 31.5 204.3 C31.5 204.3 32.7 240.2 32.7 240.2 C32.7 240.2 27.0 314.3 27.0 314.3 C27.0 314.3 35.5 382.2 35.5 382.2 Z"
+              />
+              <text class="ne-label" x="59.8" y="275.3">VT</text>
+            </g>
+            <g class="ne-inactive">
+              <path
+                class="ne-state"
+                d="M119.2 437.5 C119.2 437.5 145.3 438.3 145.3 438.3 C145.3 438.3 145.3 456.3 145.3 456.3 C145.3 456.3 156.6 476.5 156.6 476.5 C156.6 476.5 149.0 484.1 145.3 485.9 C141.6 487.7 138.6 487.4 133.4 488.2 C128.1 489.1 115.8 490.6 115.8 490.6 C115.8 490.6 119.8 470.3 119.8 470.3 C119.8 470.3 119.2 437.5 119.2 437.5 Z"
+              />
+              <text class="ne-label" x="133.4" y="460.9">RI</text>
+            </g>
+
+            <!-- Lit, linked statewide networks -->
+            <a
+              class="ne-link"
+              style="--c: var(--warn)"
+              href="https://nhmesh.com"
+              rel="noopener"
+              aria-label="NH Mesh — New Hampshire statewide MeshCore network"
+            >
+              <title>NH Mesh — New Hampshire (nhmesh.com)</title>
+              <path
+                class="ne-state"
+                d="M136.2 204.3 C136.2 204.3 147.5 197.3 147.5 197.3 C147.5 197.3 160.0 181.7 160.0 181.7 C160.0 181.7 164.5 220.7 164.5 220.7 C164.5 220.7 165.6 298.7 165.6 298.7 C165.6 298.7 174.1 351.7 174.1 351.7 C174.1 351.7 179.5 353.8 180.3 357.2 C181.2 360.6 176.7 366.7 174.7 371.2 C172.7 375.8 168.5 384.5 168.5 384.5 C168.5 384.5 81.9 382.2 81.9 382.2 C81.9 382.2 85.3 337.7 85.3 337.7 C85.3 337.7 102.3 267.5 102.3 267.5 C102.3 267.5 136.2 204.3 136.2 204.3 Z"
+              />
+              <circle class="ne-ping" cx="133.9" cy="337.7" r="7" />
+              <circle class="ne-hub" cx="133.9" cy="337.7" r="3.2" />
+              <text class="ne-label" x="129.4" y="271.4">NH</text>
+              <text class="ne-sub" x="129.4" y="283.4">NH Mesh</text>
+            </a>
+            <a
+              class="ne-link"
+              style="--c: #b98cf5"
+              href="https://discord.com/invite/2Uhz4AzB8E"
+              rel="noopener"
+              aria-label="Maine Mesh — Maine statewide MeshCore network (Discord)"
+            >
+              <title>Maine Mesh — Maine (Discord community)</title>
+              <path
+                class="ne-state"
+                d="M160.0 181.7 C160.0 181.7 204.1 131.0 204.1 131.0 C204.1 131.0 266.3 14.0 266.3 14.0 C266.3 14.0 334.2 21.8 334.2 21.8 C334.2 21.8 346.7 43.6 346.7 43.6 C346.7 43.6 345.6 131.0 345.6 131.0 C345.6 131.0 382.3 191.1 382.3 191.1 C382.3 191.1 395.3 199.1 391.9 212.9 C388.6 226.7 353.7 245.2 334.2 259.7 C314.7 274.2 294.5 292.7 274.3 300.3 C254.0 307.8 225.6 299.4 209.8 308.1 C194.0 316.8 174.1 351.7 174.1 351.7 C174.1 351.7 165.6 298.7 165.6 298.7 C165.6 298.7 164.5 220.7 164.5 220.7 C164.5 220.7 160.0 181.7 160.0 181.7 Z"
+              />
+              <circle class="ne-ping" cx="223.9" cy="279.2" r="7" />
+              <circle class="ne-hub" cx="223.9" cy="279.2" r="3.2" />
+              <text class="ne-label" x="277.7" y="166.1">ME</text>
+              <text class="ne-sub" x="277.7" y="178.1">Maine Mesh</text>
+            </a>
+            <a
+              class="ne-link"
+              style="--c: var(--accent)"
+              href="https://bostonme.sh"
+              rel="noopener"
+              aria-label="Boston Mesh — Massachusetts statewide MeshCore network"
+            >
+              <title>Boston Mesh — Massachusetts (bostonme.sh)</title>
+              <path
+                class="ne-state"
+                d="M35.5 382.2 C35.5 382.2 81.9 382.2 81.9 382.2 C81.9 382.2 147.5 384.5 147.5 384.5 C147.5 384.5 168.5 384.5 168.5 384.5 C168.5 384.5 171.9 395.3 174.7 396.2 C177.5 397.1 184.0 389.2 185.4 390.7 C186.9 392.3 168.6 410.3 169.0 417.3 C169.4 424.2 180.7 430.6 183.7 436.0 C186.8 441.4 185.6 449.4 190.0 452.4 C194.3 455.4 206.0 453.7 209.8 452.4 C213.5 451.0 217.6 448.0 218.3 445.3 C218.9 442.6 216.0 438.0 214.3 436.0 C212.5 434.0 207.4 432.2 207.5 432.1 C207.6 431.9 219.7 435.9 222.2 439.1 C224.8 442.3 224.8 447.4 225.0 451.6 C225.3 455.7 226.4 461.1 223.9 464.1 C221.4 467.0 214.5 466.7 209.8 468.0 C205.0 469.3 199.1 471.1 195.6 471.9 C192.1 472.6 190.0 473.6 186.0 473.4 C182.0 473.3 175.3 470.9 173.0 470.3 C170.7 469.7 170.5 468.2 167.3 468.7 C164.2 469.3 160.9 477.5 156.6 476.5 C152.3 475.6 145.3 456.3 145.3 456.3 C145.3 456.3 145.3 438.3 145.3 438.3 C145.3 438.3 119.2 437.5 119.2 437.5 C119.2 437.5 23.6 435.2 23.6 435.2 C23.6 435.2 35.5 382.2 35.5 382.2 Z"
+              />
+              <circle class="ne-ping" cx="156.0" cy="412.6" r="7" />
+              <circle class="ne-hub" cx="156.0" cy="412.6" r="3.2" />
+              <text class="ne-label" x="96.6" y="407.9">MA</text>
+              <text class="ne-sub" x="96.6" y="419.9">Boston Mesh</text>
+            </a>
+            <a
+              class="ne-link"
+              style="--c: #7ca8ff"
+              href="https://ctmesh.org"
+              rel="noopener"
+              aria-label="CT Mesh — Connecticut statewide MeshCore network"
+            >
+              <title>CT Mesh — Connecticut (ctmesh.org)</title>
+              <path
+                class="ne-state"
+                d="M23.6 435.2 C23.6 435.2 119.2 437.5 119.2 437.5 C119.2 437.5 119.8 470.3 119.8 470.3 C119.8 470.3 115.8 490.6 115.8 490.6 C115.8 490.6 96.3 494.2 85.3 496.0 C74.3 497.9 61.1 498.7 51.3 501.5 C41.6 504.3 28.4 511.5 24.2 513.2 C20.0 514.9 14.0 517.1 14.0 517.1 C14.0 517.1 22.5 495.3 22.5 495.3 C22.5 495.3 23.6 435.2 23.6 435.2 Z"
+              />
+              <circle class="ne-ping" cx="69.4" cy="457.8" r="7" />
+              <circle class="ne-hub" cx="69.4" cy="457.8" r="3.2" />
+              <text class="ne-label" x="76.8" y="474.2">CT</text>
+              <text class="ne-sub" x="76.8" y="486.2">CT Mesh</text>
+            </a>
+          </svg>
+          <figcaption>
+            Tap a lit state to open its MeshCore network. Vermont and Rhode
+            Island don't have a statewide net yet.
+          </figcaption>
+        </figure>
+
         <div class="links regions">
           <a
             class="link region"
