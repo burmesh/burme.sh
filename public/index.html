@@ -31,7 +31,7 @@
     <style>
       /* ===================================================================
          Design system tokens — "On The Air · Signal Waves RF"
-         A CRT-green field-station broadcast console glowing in the dark.
+         A field-station broadcast console glowing teal in the dark.
          =================================================================== */
       :root {
         --bg: #0a0e14; /* deep night page background */
@@ -40,11 +40,11 @@
         --border: #26303d; /* hairline border / grid lines */
         --text: #e6edf3; /* primary text (AA on --bg) */
         --text-dim: #9aa7b4; /* dim / secondary text */
-        --accent: #3fb950; /* CRT phosphor green */
-        --accent-bright: #56e06a; /* bright signal-green glow peaks */
-        --accent-dim: #2ea043; /* deep accent rings / strokes */
-        --warn: #d29922; /* amber warn / dial needle */
-        --trace: #7ee787; /* oscilloscope cyan-green trace */
+        --accent: #2dd4bf; /* brand teal (from the logo mark) */
+        --accent-bright: #5ce0d0; /* bright teal glow peaks */
+        --accent-dim: #1f9e8f; /* deep teal rings / strokes */
+        --warn: #f2b441; /* brand amber (from the logo nodes) */
+        --trace: #7fe9dd; /* signal-trace teal */
         --radius: 14px;
         --maxw: 880px;
         --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas,
@@ -95,27 +95,27 @@
         background:
           radial-gradient(
             1200px 600px at 50% -10%,
-            rgba(63, 185, 80, 0.1),
+            rgba(45, 212, 191, 0.1),
             transparent 60%
           ),
           repeating-linear-gradient(
             0deg,
-            rgba(63, 185, 80, 0.035) 0 1px,
+            rgba(45, 212, 191, 0.035) 0 1px,
             transparent 1px 40px
           ),
           repeating-linear-gradient(
             90deg,
-            rgba(63, 185, 80, 0.035) 0 1px,
+            rgba(45, 212, 191, 0.035) 0 1px,
             transparent 1px 40px
           ),
           repeating-linear-gradient(
             0deg,
-            rgba(63, 185, 80, 0.02) 0 1px,
+            rgba(45, 212, 191, 0.02) 0 1px,
             transparent 1px 160px
           ),
           repeating-linear-gradient(
             90deg,
-            rgba(63, 185, 80, 0.02) 0 1px,
+            rgba(45, 212, 191, 0.02) 0 1px,
             transparent 1px 160px
           );
         -webkit-mask-image: linear-gradient(
@@ -198,15 +198,15 @@
         height: 7px;
         border-radius: 50%;
         background: var(--accent);
-        box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.18);
+        box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.18);
       }
 
       /* ===================================================================
          Hero — full-bleed station band with concentric broadcast waves
          radiating from behind the brand mark. The band spans the full viewport
-         width (distinct from the 880px body column); a top glow, a masked
-         signal grid, and a faint scanline supply the atmosphere. Ring stagger
-         encodes the real Advert timing (zero-hop / flood).
+         width (distinct from the 880px body column); a top glow and a masked
+         signal grid supply the atmosphere. Ring stagger encodes the real
+         Advert timing (zero-hop / flood).
          =================================================================== */
       header {
         position: relative;
@@ -218,7 +218,7 @@
         background:
           radial-gradient(
             1100px 520px at 50% -6%,
-            rgba(63, 185, 80, 0.2),
+            rgba(45, 212, 191, 0.2),
             transparent 60%
           ),
           var(--bg-soft);
@@ -234,12 +234,12 @@
         background:
           repeating-linear-gradient(
             0deg,
-            rgba(63, 185, 80, 0.05) 0 1px,
+            rgba(45, 212, 191, 0.05) 0 1px,
             transparent 1px 42px
           ),
           repeating-linear-gradient(
             90deg,
-            rgba(63, 185, 80, 0.05) 0 1px,
+            rgba(45, 212, 191, 0.05) 0 1px,
             transparent 1px 42px
           );
         -webkit-mask-image: radial-gradient(
@@ -252,20 +252,6 @@
           black,
           transparent 72%
         );
-      }
-
-      /* Ultra-subtle CRT scanline veneer — sits behind content only */
-      header::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        background: repeating-linear-gradient(
-          rgba(0, 0, 0, 0) 0 2px,
-          rgba(0, 0, 0, 0.05) 2px 3px
-        );
-        opacity: 0.55;
       }
 
       /* Brand mark + radiating waves stage (waves emanate from the logo centre) */
@@ -310,23 +296,23 @@
         height: 8px;
         border-radius: 50%;
         background: var(--accent);
-        box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.2);
+        box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
       }
       /* STANDBY state — amber, text+shape redundant (never color alone) */
       .badge.pending {
         color: var(--warn);
-        border-color: rgba(210, 153, 34, 0.4);
+        border-color: rgba(242, 180, 65, 0.4);
       }
       .badge.pending .dot {
         background: var(--warn);
-        box-shadow: 0 0 0 3px rgba(210, 153, 34, 0.2);
+        box-shadow: 0 0 0 3px rgba(242, 180, 65, 0.2);
       }
 
       header h1 {
         font-size: clamp(2rem, 6vw, 3rem);
         margin: 16px 0 6px;
         letter-spacing: -0.02em;
-        text-shadow: 0 0 18px rgba(63, 185, 80, 0.25); /* phosphor bloom, large text only */
+        text-shadow: 0 0 18px rgba(45, 212, 191, 0.25); /* phosphor bloom, large text only */
       }
 
       header .domain {
@@ -343,7 +329,7 @@
         font-size: 1.08rem;
       }
 
-      /* Oscilloscope sweep divider — live signal trace from the antenna */
+      /* Oscilloscope sweep divider — a live signal trace from the antenna */
       .scope {
         width: 100%;
         height: 40px;
@@ -356,7 +342,6 @@
         stroke: currentColor;
         stroke-width: 2;
         stroke-linecap: round;
-        filter: drop-shadow(0 0 4px rgba(63, 185, 80, 0.45));
         stroke-dasharray: 1200;
         stroke-dashoffset: 0;
       }
@@ -414,7 +399,7 @@
         height: 1px;
         background: linear-gradient(
           to right,
-          rgba(63, 185, 80, 0.45),
+          rgba(45, 212, 191, 0.45),
           transparent
         );
       }
@@ -484,7 +469,7 @@
         color: var(--text-dim);
         padding: 11px 18px;
         border-bottom: 1px solid var(--border);
-        background: rgba(63, 185, 80, 0.04);
+        background: rgba(45, 212, 191, 0.04);
       }
       .panel-cap b {
         color: var(--accent);
@@ -505,7 +490,7 @@
       /* left status rail on each value row */
       .panel dd {
         color: var(--text);
-        border-left: 2px solid rgba(63, 185, 80, 0.28);
+        border-left: 2px solid rgba(45, 212, 191, 0.28);
       }
       .panel dt {
         color: var(--text-dim);
@@ -535,7 +520,7 @@
         height: 8px;
         border-radius: 50%;
         background: var(--accent);
-        box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.18);
+        box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.18);
       }
       .status.pending {
         color: var(--warn);
@@ -544,7 +529,7 @@
       }
       .status.pending .dot {
         background: var(--warn);
-        box-shadow: 0 0 0 3px rgba(210, 153, 34, 0.18);
+        box-shadow: 0 0 0 3px rgba(242, 180, 65, 0.18);
       }
 
       /* ----- Tuned dial for the 910.525 MHz Frequency row ----- */
@@ -569,7 +554,6 @@
         font-weight: 700;
         letter-spacing: 0.04em;
         color: var(--text);
-        text-shadow: 0 0 12px rgba(63, 185, 80, 0.28);
       }
       .freq-readout .num .unit {
         font-size: 0.85rem;
@@ -633,11 +617,11 @@
       }
       /* highlight THIS repeater's role card to tie back to the hero */
       .card.is-this {
-        border-color: rgba(63, 185, 80, 0.45);
+        border-color: rgba(45, 212, 191, 0.45);
         background:
           radial-gradient(
             120% 80% at 100% 0%,
-            rgba(63, 185, 80, 0.08),
+            rgba(45, 212, 191, 0.08),
             transparent 60%
           ),
           var(--bg-card);
@@ -713,8 +697,8 @@
         background:
           radial-gradient(
             circle at 35% 30%,
-            rgba(86, 224, 106, 0.35),
-            rgba(63, 185, 80, 0.1) 60%
+            rgba(92, 224, 208, 0.35),
+            rgba(45, 212, 191, 0.1) 60%
           ),
           var(--bg-card);
         border: 2px solid var(--accent-dim);
@@ -792,9 +776,9 @@
       .note {
         margin-top: 16px;
         padding: 14px 16px;
-        border: 1px solid rgba(210, 153, 34, 0.3);
+        border: 1px solid rgba(242, 180, 65, 0.3);
         border-left: 3px solid var(--warn);
-        background: rgba(210, 153, 34, 0.06);
+        background: rgba(242, 180, 65, 0.06);
         border-radius: 0 8px 8px 0;
         color: var(--text-dim);
         font-size: 0.92rem;
@@ -846,7 +830,7 @@
         gap: 6px;
         border: 2px dashed var(--border);
         border-radius: 10px;
-        background: rgba(63, 185, 80, 0.03);
+        background: rgba(45, 212, 191, 0.03);
         color: var(--text-dim);
       }
       .qr-slot .qr-pending {
@@ -956,7 +940,7 @@
         height: 34px;
         color: var(--accent);
         margin-bottom: 8px;
-        filter: drop-shadow(0 0 5px rgba(63, 185, 80, 0.4));
+        filter: drop-shadow(0 0 2px rgba(45, 212, 191, 0.22));
       }
       footer .onair {
         display: block;
@@ -1052,7 +1036,7 @@
           border-top: 1px solid var(--border);
           /* continue the value rail up through the label so the collapsed
              single-column row shows one unbroken instrument rail */
-          border-left: 2px solid rgba(63, 185, 80, 0.28);
+          border-left: 2px solid rgba(45, 212, 191, 0.28);
         }
         .panel dd {
           border-top: none;
@@ -1106,7 +1090,7 @@
         /* expanding/fading broadcast rings. Stagger encodes the real
            Advert timing: zero-hop 12h / flood 48h advertisement cadence. */
         .wave {
-          animation: broadcast 4s ease-out infinite;
+          animation: broadcast 6s ease-out infinite;
         }
         .wave.w1 {
           animation-delay: 0s;
@@ -1122,8 +1106,8 @@
         }
         @keyframes broadcast {
           from {
-            transform: scale(0.2);
-            opacity: 0.6;
+            transform: scale(0.24);
+            opacity: 0.35;
           }
           to {
             transform: scale(1);
@@ -1131,7 +1115,7 @@
           }
         }
 
-        /* oscilloscope sweep — trace "draws" left to right */
+        /* oscilloscope sweep — trace "draws" left to right, on repeat */
         .scope path.trace {
           animation: sweep 3s linear infinite;
         }
@@ -1153,11 +1137,11 @@
           0%,
           100% {
             opacity: 1;
-            box-shadow: 0 0 0 3px rgba(210, 153, 34, 0.18);
+            box-shadow: 0 0 0 3px rgba(242, 180, 65, 0.18);
           }
           50% {
             opacity: 0.45;
-            box-shadow: 0 0 0 5px rgba(210, 153, 34, 0.05);
+            box-shadow: 0 0 0 5px rgba(242, 180, 65, 0.05);
           }
         }
 
@@ -1168,24 +1152,10 @@
         @keyframes livepulse {
           0%,
           100% {
-            box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.2);
+            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
           }
           50% {
-            box-shadow: 0 0 0 5px rgba(63, 185, 80, 0.06);
-          }
-        }
-
-        /* gentle hero halo glow breath */
-        .antenna-svg {
-          animation: bloom 6s ease-in-out infinite;
-        }
-        @keyframes bloom {
-          0%,
-          100% {
-            filter: drop-shadow(0 0 6px rgba(63, 185, 80, 0.5));
-          }
-          50% {
-            filter: drop-shadow(0 0 12px rgba(63, 185, 80, 0.75));
+            box-shadow: 0 0 0 5px rgba(45, 212, 191, 0.06);
           }
         }
       }
@@ -1222,7 +1192,7 @@
         display: block;
         width: 100%; /* fills the .antenna-stage, which sets the size */
         height: auto;
-        filter: drop-shadow(0 0 22px rgba(63, 185, 80, 0.22));
+        filter: drop-shadow(0 0 12px rgba(45, 212, 191, 0.14));
       }
 
       /* Visually-hidden but available to assistive tech / document outline */
@@ -1261,7 +1231,7 @@
         gap: 10px;
         padding: 9px 14px;
         border-bottom: 1px solid var(--border);
-        background: rgba(63, 185, 80, 0.04);
+        background: rgba(45, 212, 191, 0.04);
       }
       .repeater .repeater-name {
         flex: 1 1 auto;
@@ -1388,7 +1358,7 @@
       .sectionnav a:hover {
         text-decoration: none;
         color: var(--accent);
-        background: rgba(63, 185, 80, 0.08);
+        background: rgba(45, 212, 191, 0.08);
       }
 
       /* Anchored sections clear the sticky bar when jumped to via the nav */
@@ -1424,8 +1394,8 @@
       }
       .btn-primary {
         background: var(--accent);
-        color: #06210d;
-        box-shadow: 0 0 18px rgba(63, 185, 80, 0.28);
+        color: #04211e;
+        box-shadow: 0 0 18px rgba(45, 212, 191, 0.28);
       }
       .btn-primary:hover {
         background: var(--accent-bright);
